@@ -13,9 +13,12 @@ import {
   ActionIcon,
   Menu,
   rem,
+  Dialog,
 } from "@mantine/core";
 import { IconDots, IconTrash } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
+import { useDisclosure } from "@mantine/hooks";
+import { useState } from "react";
 
 const avatars = [
   "https://avatars.githubusercontent.com/u/10353856?s=460&u=88394dfd67727327c1f7670a1764dc38a8a24831&v=4",
@@ -28,6 +31,8 @@ export default function ProjectDetail() {
   const { data, isFetching } = api.useGetProjectQuery({ id: parseInt(id) });
   const setDeleteProject = api.useDeleteProjectMutation()[0];
   const navigate = useNavigate();
+  const [applyMessage, setApplyMessage] = useState("신청하기");
+  const [opened, { open, close }] = useDisclosure(false);
   if (isFetching) return <div>loading...</div>;
   if (!data) return <div>프로젝트 데이터를 불러오지 못했습니다.</div>;
   const project = data.data;
@@ -44,6 +49,13 @@ export default function ProjectDetail() {
     } catch (e) {
       console.error(e);
     }
+  };
+
+  const handleApply = async () => {
+    setApplyMessage((prev) =>
+      prev === "신청하기" ? "신청 취소하기" : "신청하기"
+    );
+    open();
   };
 
   return (
@@ -104,9 +116,20 @@ export default function ProjectDetail() {
             <Avatar radius="xl">+5</Avatar>
           </Avatar.Group>
 
-          <Button>신청하기</Button>
+          <Button onClick={handleApply}>{applyMessage}</Button>
         </Group>
       </Box>
+      <Dialog
+        opened={opened}
+        withCloseButton
+        onClose={close}
+        size="lg"
+        radius="md"
+      >
+        <Text size="sm" weight={500}>
+          {applyMessage} 완료
+        </Text>
+      </Dialog>
     </Layout>
   );
 }
