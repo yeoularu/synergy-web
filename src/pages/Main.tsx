@@ -3,9 +3,10 @@ import Layout from "components/Layout";
 import { PostCard } from "components/PostCard";
 import { Category } from "components/Category";
 import { api } from "app/api";
+import { Link } from "react-router-dom";
 
 export default function Main() {
-  const { data, isFetching } = api.useGetPostsQuery(null);
+  const { data, isFetching } = api.useGetAllPostsQuery(null);
 
   if (isFetching) return <div>loading...</div>;
   return (
@@ -19,7 +20,9 @@ export default function Main() {
         align="center"
       >
         <Group>
-          <Button>글 쓰기</Button>
+          <Link to={"/new/post"}>
+            <Button>글 쓰기</Button>
+          </Link>
           <Button>새 프로젝트</Button>
         </Group>
 

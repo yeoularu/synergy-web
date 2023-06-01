@@ -21,6 +21,7 @@ export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_URL,
   }),
+  tagTypes: ["Post", "Project"],
   endpoints: (build) => ({
     register: build.mutation<void, { email: string; password: string }>({
       query: (credentials) => ({
@@ -36,11 +37,24 @@ export const api = createApi({
         body: credentials,
       }),
     }),
-    getPosts: build.query<Post[], null>({
+    getAllPosts: build.query<Post[], null>({
       query: () => "/post/postAll",
+      providesTags: ["Post"],
     }),
-    getProjects: build.query<Project[], null>({
+    getAllProjects: build.query<Project[], null>({
       query: () => "/project/projectAll",
+      providesTags: ["Project"],
+    }),
+    newPost: build.mutation<void, { title: string; content: string }>({
+      query: (post) => ({
+        url: "/post/create",
+        method: "POST",
+        body: {
+          subject: post.title,
+          content: post.content,
+        },
+      }),
+      invalidatesTags: ["Post"],
     }),
   }),
 });
