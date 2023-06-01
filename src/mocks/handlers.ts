@@ -77,9 +77,8 @@ export const handlers = [
   }),
 
   rest.delete("/post/delete/:id", (req, res, ctx) => {
-    const { id } = req.params;
-    console.log(id);
-    const index = posts.findIndex((post) => post.post_id === parseInt("1"));
+    const { id } = req.params as { id: string };
+    const index = posts.findIndex((post) => post.post_id === parseInt(id));
     if (index === -1) return res(ctx.status(400));
     posts.splice(index, 1);
 
