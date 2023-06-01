@@ -3,11 +3,16 @@ import Layout from "components/Layout";
 import { PostCard } from "components/PostCard";
 import { Category } from "components/Category";
 import { api } from "app/api";
+import { Link } from "react-router-dom";
+import ProjectCard from "components/ProjectCard";
 
 export default function Main() {
-  const { data, isFetching } = api.useGetPostsQuery(null);
+  const { data: postsData, isFetching: isPostsFetching } =
+    api.useGetAllPostsQuery(null);
+  const { data: ProjectsData, isFetching: isProjectsFetching } =
+    api.useGetAllProjectsQuery(null);
 
-  if (isFetching) return <div>loading...</div>;
+  if (isPostsFetching || isProjectsFetching) return <div>loading...</div>;
   return (
     <Layout navbarChildren={<Category />}>
       <Stack
@@ -19,12 +24,19 @@ export default function Main() {
         align="center"
       >
         <Group>
-          <Button>글 쓰기</Button>
-          <Button>새 프로젝트</Button>
+          <Link to={"/new/post"}>
+            <Button>글 쓰기</Button>
+          </Link>
+          <Link to={"/new/project"}>
+            <Button>새 프로젝트</Button>
+          </Link>
         </Group>
 
-        {data?.map((post, i) => (
+        {postsData?.data.map((post, i) => (
           <PostCard key={i} {...post}></PostCard>
+        ))}
+        {ProjectsData?.data.map((project, i) => (
+          <ProjectCard key={i} {...project}></ProjectCard>
         ))}
       </Stack>
     </Layout>

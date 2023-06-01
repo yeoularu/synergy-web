@@ -4,7 +4,6 @@ import {
   Navbar,
   Footer,
   Aside,
-  Text,
   MediaQuery,
   Burger,
   useMantineTheme,
@@ -39,8 +38,8 @@ interface LayoutProps {
 
 export default function Layout({
   children,
-  navbarChildren = <Text>Nav</Text>,
-  sidebarChildren = <Text>트렌딩 컨텐츠</Text>,
+  navbarChildren,
+  sidebarChildren,
 }: LayoutProps) {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
