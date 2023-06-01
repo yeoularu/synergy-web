@@ -9,7 +9,7 @@ import {
   Auth,
   NewPost,
   NewProject,
-  Project,
+  ProjectDetail,
 } from "pages";
 import {
   BrowserRouter,
@@ -35,7 +35,7 @@ export default function App() {
               <Route path="/people" element={<People />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/notification" element={<Notification />} />
-              <Route path="/project/:id" element={<Project />} />
+              <Route path="/project/:id" element={<ProjectDetail />} />
               <Route path="/new/post" element={<NewPost />} />
               <Route path="/new/project" element={<NewProject />} />
             </Route>

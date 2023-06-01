@@ -2,7 +2,6 @@ import { api } from "app/api";
 import Layout from "components/Layout";
 import { useParams } from "react-router-dom";
 import {
-  Card,
   Avatar,
   Text,
   Progress,
@@ -10,7 +9,13 @@ import {
   Group,
   Title,
   Button,
+  Box,
+  ActionIcon,
+  Menu,
+  rem,
 } from "@mantine/core";
+import { IconDots, IconTrash } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
 
 const avatars = [
   "https://avatars.githubusercontent.com/u/10353856?s=460&u=88394dfd67727327c1f7670a1764dc38a8a24831&v=4",
@@ -21,6 +26,8 @@ const avatars = [
 export default function ProjectDetail() {
   const { id } = useParams() as { id: string };
   const { data, isFetching } = api.useGetProjectQuery({ id: parseInt(id) });
+  const setDeleteProject = api.useDeleteProjectMutation()[0];
+  const navigate = useNavigate();
   if (isFetching) return <div>loading...</div>;
   if (!data) return <div>프로젝트 데이터를 불러오지 못했습니다.</div>;
   const project = data.data;
@@ -30,10 +37,38 @@ export default function ProjectDetail() {
     (today.getTime() - createDate.getTime()) / 1000 / 60 / 60 / 24
   );
 
+  const handleDelete = async () => {
+    try {
+      await setDeleteProject({ id: parseInt(id) }).unwrap();
+      navigate("/");
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <Layout>
-      <Card withBorder padding="lg" radius="md">
-        <Badge>D{dday < 0 ? dday : `+${dday}`}</Badge>
+      <Box w="100%">
+        <Group position="apart">
+          <Badge>D{dday < 0 ? dday : `+${dday}`}</Badge>
+          <Menu withinPortal position="bottom-end" shadow="sm">
+            <Menu.Target>
+              <ActionIcon>
+                <IconDots size="1rem" />
+              </ActionIcon>
+            </Menu.Target>
+
+            <Menu.Dropdown>
+              <Menu.Item
+                icon={<IconTrash size={rem(14)} />}
+                color="red"
+                onClick={handleDelete}
+              >
+                삭제하기
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </Group>
 
         <Title fz="lg" fw={500} mt="md">
           {project.name}
@@ -71,7 +106,7 @@ export default function ProjectDetail() {
 
           <Button>신청하기</Button>
         </Group>
-      </Card>
+      </Box>
     </Layout>
   );
 }

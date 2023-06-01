@@ -33,26 +33,20 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface PostCardProps {
-  post_id: number;
+  id: number;
   title: string;
   content: string;
   author: string;
   likes: number;
 }
 
-export function PostCard({
-  post_id,
-  title,
-  content,
-  author,
-  likes,
-}: PostCardProps) {
+export function PostCard({ id, title, content, author, likes }: PostCardProps) {
   const { classes } = useStyles();
   const setDeletePost = api.useDeletePostMutation()[0];
 
   const handleDelete = async () => {
     try {
-      await setDeletePost({ post_id }).unwrap();
+      await setDeletePost({ id }).unwrap();
     } catch (e) {
       console.error(e);
     }

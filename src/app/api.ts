@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 interface Post {
-  post_id: number;
+  id: number;
   title: string;
   content: string;
   author: string;
@@ -76,6 +76,14 @@ export const api = createApi({
     getProject: build.query<{ data: Project }, { id: number }>({
       query: ({ id }) => `/project/search/${id}`,
       providesTags: ["Project"],
+    }),
+
+    deleteProject: build.mutation<void, { id: number }>({
+      query: ({ id }) => ({
+        url: `/project/delete/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Project"],
     }),
   }),
 });
