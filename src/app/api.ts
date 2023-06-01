@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 interface Post {
+  post_id: number;
   title: string;
   content: string;
   author: string;
@@ -45,7 +46,7 @@ export const api = createApi({
       query: () => "/project/projectAll",
       providesTags: ["Project"],
     }),
-    newPost: build.mutation<void, { title: string; content: string }>({
+    createPost: build.mutation<void, { title: string; content: string }>({
       query: (post) => ({
         url: "/post/create",
         method: "POST",
@@ -53,6 +54,13 @@ export const api = createApi({
           subject: post.title,
           content: post.content,
         },
+      }),
+      invalidatesTags: ["Post"],
+    }),
+    deletePost: build.mutation<void, { post_id: number }>({
+      query: ({ post_id }) => ({
+        url: `/post/delete/${post_id}`,
+        method: "DELETE",
       }),
       invalidatesTags: ["Post"],
     }),

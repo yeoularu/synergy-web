@@ -3,18 +3,21 @@ import { rest } from "msw";
 
 const posts = [
   {
+    post_id: 0,
     title: "First post",
     content: "Hello!",
     author: "Yihua",
     likes: 0,
   },
   {
+    post_id: 1,
     title: "Second post",
     content: "Hello!",
     author: "Yihua",
     likes: 1,
   },
   {
+    post_id: 2,
     title: "",
     content: "Third post with no title",
     author: "Yihua",
@@ -62,8 +65,24 @@ export const handlers = [
     const { subject, content } = await req.json();
     if (subject === "error") return res(ctx.status(400));
 
-    posts.push({ title: subject, content, author: "new user", likes: 0 });
+    posts.push({
+      post_id: posts.at(-1)?.post_id ? posts.at(-1)!.post_id + 1 : 0,
+      title: subject,
+      content,
+      author: "new user",
+      likes: 0,
+    });
     console.log(posts);
+    return res(ctx.status(200));
+  }),
+
+  rest.delete("/post/delete/:id", (req, res, ctx) => {
+    const { id } = req.params;
+    console.log(id);
+    const index = posts.findIndex((post) => post.post_id === parseInt("1"));
+    if (index === -1) return res(ctx.status(400));
+    posts.splice(index, 1);
+
     return res(ctx.status(200));
   }),
 ];

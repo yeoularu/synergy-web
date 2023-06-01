@@ -1,4 +1,4 @@
-import { IconHeart } from "@tabler/icons-react";
+import { IconDots, IconHeart, IconTrash } from "@tabler/icons-react";
 import {
   Card,
   Text,
@@ -6,7 +6,10 @@ import {
   ActionIcon,
   createStyles,
   Avatar,
+  Menu,
+  rem,
 } from "@mantine/core";
+import { api } from "app/api";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -30,21 +33,57 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface PostCardProps {
+  post_id: number;
   title: string;
   content: string;
   author: string;
   likes: number;
 }
 
-export function PostCard({ title, content, author, likes }: PostCardProps) {
+export function PostCard({
+  post_id,
+  title,
+  content,
+  author,
+  likes,
+}: PostCardProps) {
   const { classes } = useStyles();
+  const setDeletePost = api.useDeletePostMutation()[0];
+
+  const handleDelete = async () => {
+    try {
+      await setDeletePost({ post_id }).unwrap();
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <Card withBorder radius="md" p="md" className={classes.card}>
       <Card.Section className={classes.section}>
-        <Group>
-          <Avatar radius="xl" />
-          <Text>{author}</Text>
+        <Group position="apart">
+          <Group>
+            <Avatar radius="xl" />
+            <Text>{author}</Text>
+          </Group>
+
+          <Menu withinPortal position="bottom-end" shadow="sm">
+            <Menu.Target>
+              <ActionIcon>
+                <IconDots size="1rem" />
+              </ActionIcon>
+            </Menu.Target>
+
+            <Menu.Dropdown>
+              <Menu.Item
+                icon={<IconTrash size={rem(14)} />}
+                color="red"
+                onClick={handleDelete}
+              >
+                삭제하기
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
         </Group>
       </Card.Section>
 

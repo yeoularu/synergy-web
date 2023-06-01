@@ -4,7 +4,6 @@ import {
   Navbar,
   Footer,
   Aside,
-  Text,
   MediaQuery,
   Burger,
   useMantineTheme,

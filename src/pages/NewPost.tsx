@@ -13,7 +13,7 @@ import Layout from "components/Layout";
 import { useNavigate } from "react-router-dom";
 
 export default function NewPost() {
-  const setNewPost = api.useNewPostMutation()[0];
+  const setCreatePost = api.useCreatePostMutation()[0];
   const navigate = useNavigate();
   const [opened, { open, close }] = useDisclosure(false);
   const form = useForm({
@@ -28,7 +28,7 @@ export default function NewPost() {
       <form
         onSubmit={form.onSubmit(async (values) => {
           try {
-            await setNewPost(values).unwrap();
+            await setCreatePost(values).unwrap();
             navigate("/");
           } catch (e) {
             open();
