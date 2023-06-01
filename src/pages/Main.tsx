@@ -23,10 +23,12 @@ export default function Main() {
           <Link to={"/new/post"}>
             <Button>글 쓰기</Button>
           </Link>
-          <Button>새 프로젝트</Button>
+          <Link to={"/new/project"}>
+            <Button>새 프로젝트</Button>
+          </Link>
         </Group>
 
-        {data?.map((post, i) => (
+        {data?.data.map((post, i) => (
           <PostCard key={i} {...post}></PostCard>
         ))}
       </Stack>

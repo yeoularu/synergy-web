@@ -3,21 +3,21 @@ import { rest } from "msw";
 
 const posts = [
   {
-    post_id: 0,
+    id: 0,
     title: "First post",
     content: "Hello!",
     author: "Yihua",
     likes: 0,
   },
   {
-    post_id: 1,
+    id: 1,
     title: "Second post",
     content: "Hello!",
     author: "Yihua",
     likes: 1,
   },
   {
-    post_id: 2,
+    id: 2,
     title: "",
     content: "Third post with no title",
     author: "Yihua",
@@ -25,9 +25,30 @@ const posts = [
   },
 ];
 
+const projects = [
+  {
+    id: 0,
+    name: "First project",
+    content: "Hello!",
+    field: "AI",
+    createDate: "2021-09-01",
+    endDate: "2021-09-30",
+    likes: 0,
+  },
+  {
+    id: 1,
+    name: "Second project",
+    content: "전기전자 프로젝트입니다.",
+    field: "전기전자",
+    createDate: "2022-11-11",
+    endDate: "2023-01-12",
+    likes: 21,
+  },
+];
+
 export const handlers = [
   rest.get("/post/postAll", (_, res, ctx) => {
-    return res(ctx.status(200), ctx.json(posts));
+    return res(ctx.status(200), ctx.json({ data: posts }));
   }),
 
   rest.post("/api/v1/members/join", async (req, res, ctx) => {
@@ -66,7 +87,7 @@ export const handlers = [
     if (subject === "error") return res(ctx.status(400));
 
     posts.push({
-      post_id: posts.at(-1)?.post_id ? posts.at(-1)!.post_id + 1 : 0,
+      id: posts.at(-1)?.id ? posts.at(-1)!.id + 1 : 0,
       title: subject,
       content,
       author: "new user",
@@ -78,10 +99,51 @@ export const handlers = [
 
   rest.delete("/post/delete/:id", (req, res, ctx) => {
     const { id } = req.params as { id: string };
-    const index = posts.findIndex((post) => post.post_id === parseInt(id));
+    const index = posts.findIndex((post) => post.id === parseInt(id));
     if (index === -1) return res(ctx.status(400));
     posts.splice(index, 1);
 
     return res(ctx.status(200));
+  }),
+
+  rest.post("/project/create", async (req, res, ctx) => {
+    const { name, content, field, createDate, endDate } = await req.json();
+    if (name === "error") return res(ctx.status(400));
+
+    const id = projects.at(-1)?.id ? projects.at(-1)!.id + 1 : 0;
+
+    projects.push({
+      id,
+      name,
+      content,
+      field,
+      createDate,
+      endDate,
+      likes: 0,
+    });
+
+    return res(ctx.status(200), ctx.json(id));
+  }),
+
+  rest.get("/project/projectAll", (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json({ data: projects }));
+  }),
+
+  rest.delete("/project/delete/:id", (req, res, ctx) => {
+    const { id } = req.params as { id: string };
+    const index = projects.findIndex((project) => project.id === parseInt(id));
+    if (index === -1) return res(ctx.status(400));
+    projects.splice(index, 1);
+
+    return res(ctx.status(200));
+  }),
+
+  rest.get("/project/search/:id", (req, res, ctx) => {
+    const { id } = req.params as { id: string };
+    const index = projects.findIndex((project) => project.id === parseInt(id));
+    if (index === -1) return res(ctx.status(400));
+    console.log(projects);
+
+    return res(ctx.status(200), ctx.json({ data: projects[index] }));
   }),
 ];

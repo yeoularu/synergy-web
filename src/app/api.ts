@@ -12,10 +12,10 @@ interface Project {
   id: number;
   name: string;
   content: string;
-  field: string;
+  field: string[];
   createDate: string;
   endDate: string;
-  teamMembers: number[];
+  likes: number;
 }
 
 export const api = createApi({
@@ -38,11 +38,11 @@ export const api = createApi({
         body: credentials,
       }),
     }),
-    getAllPosts: build.query<Post[], null>({
+    getAllPosts: build.query<{ data: Post[] }, null>({
       query: () => "/post/postAll",
       providesTags: ["Post"],
     }),
-    getAllProjects: build.query<Project[], null>({
+    getAllProjects: build.query<{ data: Project[] }, null>({
       query: () => "/project/projectAll",
       providesTags: ["Project"],
     }),
@@ -57,12 +57,25 @@ export const api = createApi({
       }),
       invalidatesTags: ["Post"],
     }),
-    deletePost: build.mutation<void, { post_id: number }>({
-      query: ({ post_id }) => ({
-        url: `/post/delete/${post_id}`,
+    deletePost: build.mutation<void, { id: number }>({
+      query: ({ id }) => ({
+        url: `/post/delete/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Post"],
+    }),
+    createProject: build.mutation<number, Omit<Project, "id" | "likes">>({
+      query: (project) => ({
+        url: "/project/create",
+        method: "POST",
+        body: project,
+      }),
+      invalidatesTags: ["Project"],
+    }),
+
+    getProject: build.query<{ data: Project }, { id: number }>({
+      query: ({ id }) => `/project/search/${id}`,
+      providesTags: ["Project"],
     }),
   }),
 });
