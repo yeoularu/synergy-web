@@ -14,8 +14,9 @@ import {
   Menu,
   rem,
   Dialog,
+  createStyles,
 } from "@mantine/core";
-import { IconDots, IconTrash } from "@tabler/icons-react";
+import { IconDots, IconHeart, IconTrash } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
@@ -26,12 +27,24 @@ const avatars = [
   "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80",
 ];
 
+const useStyles = createStyles((theme) => ({
+  likes: {
+    fontSize: theme.fontSizes.sm,
+    color: theme.colors.gray[6],
+  },
+
+  likeBtn: {
+    color: theme.colors.red[6],
+  },
+}));
+
 export default function ProjectDetail() {
   const { id } = useParams() as { id: string };
   const { data, isFetching } = api.useGetProjectQuery({ id: parseInt(id) });
   const setDeleteProject = api.useDeleteProjectMutation()[0];
   const navigate = useNavigate();
-  const [applyMessage, setApplyMessage] = useState("신청하기");
+  const { classes } = useStyles();
+  const [isApplied, setIsApplied] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
   if (isFetching) return <div>loading...</div>;
   if (!data) return <div>프로젝트 데이터를 불러오지 못했습니다.</div>;
@@ -52,10 +65,8 @@ export default function ProjectDetail() {
   };
 
   const handleApply = async () => {
-    setApplyMessage((prev) =>
-      prev === "신청하기" ? "신청 취소하기" : "신청하기"
-    );
     open();
+    setIsApplied((prev) => !prev);
   };
 
   return (
@@ -116,7 +127,22 @@ export default function ProjectDetail() {
             <Avatar radius="xl">+5</Avatar>
           </Avatar.Group>
 
-          <Button onClick={handleApply}>{applyMessage}</Button>
+          <Group>
+            <ActionIcon variant="default" radius="md" size={36}>
+              <IconHeart
+                size="1.1rem"
+                className={classes.likeBtn}
+                stroke={1.5}
+              />
+            </ActionIcon>
+            {project.likes > 0 ? (
+              <Text className={classes.likes}>좋아요 {project.likes}</Text>
+            ) : null}
+          </Group>
+
+          <Button onClick={handleApply}>
+            {isApplied ? "신청 취소하기" : "신청하기"}
+          </Button>
         </Group>
       </Box>
       <Dialog
@@ -127,7 +153,7 @@ export default function ProjectDetail() {
         radius="md"
       >
         <Text size="sm" weight={500}>
-          {applyMessage} 완료
+          {isApplied ? "신청하기" : "신청 취소하기"} 완료
         </Text>
       </Dialog>
     </Layout>

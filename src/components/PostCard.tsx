@@ -95,7 +95,9 @@ export function PostCard({ id, title, content, author, likes }: PostCardProps) {
           <ActionIcon variant="default" radius="md" size={36}>
             <IconHeart size="1.1rem" className={classes.likeBtn} stroke={1.5} />
           </ActionIcon>
-          {likes ? <Text className={classes.likes}>좋아요 {likes}</Text> : null}
+          {likes > 0 ? (
+            <Text className={classes.likes}>좋아요 {likes}</Text>
+          ) : null}
         </Group>
       </Card.Section>
     </Card>
