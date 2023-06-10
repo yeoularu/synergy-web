@@ -1,6 +1,6 @@
 import { Button, Group, Stack } from "@mantine/core";
 import Layout from "components/Layout";
-import { PostCard } from "components/PostCard";
+import PostCard from "components/PostCard";
 import { Category } from "components/Category";
 import { api } from "app/api";
 import { Link } from "react-router-dom";

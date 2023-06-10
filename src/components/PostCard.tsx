@@ -10,6 +10,7 @@ import {
   rem,
 } from "@mantine/core";
 import { api } from "app/api";
+import LikeSection from "./LikeSection";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -40,7 +41,13 @@ interface PostCardProps {
   likes: number;
 }
 
-export function PostCard({ id, title, content, author, likes }: PostCardProps) {
+export default function PostCard({
+  id,
+  title,
+  content,
+  author,
+  likes,
+}: PostCardProps) {
   const { classes } = useStyles();
   const setDeletePost = api.useDeletePostMutation()[0];
 
@@ -91,14 +98,7 @@ export function PostCard({ id, title, content, author, likes }: PostCardProps) {
       </Card.Section>
 
       <Card.Section className={classes.section}>
-        <Group>
-          <ActionIcon variant="default" radius="md" size={36}>
-            <IconHeart size="1.1rem" className={classes.likeBtn} stroke={1.5} />
-          </ActionIcon>
-          {likes > 0 ? (
-            <Text className={classes.likes}>좋아요 {likes}</Text>
-          ) : null}
-        </Group>
+        <LikeSection {...{ id, likes, isPost: true }} />
       </Card.Section>
     </Card>
   );

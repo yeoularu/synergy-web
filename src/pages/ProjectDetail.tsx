@@ -15,11 +15,13 @@ import {
   rem,
   Dialog,
   createStyles,
+  Flex,
 } from "@mantine/core";
 import { IconDots, IconHeart, IconTrash } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
+import LikeSection from "components/LikeSection";
 
 const avatars = [
   "https://avatars.githubusercontent.com/u/10353856?s=460&u=88394dfd67727327c1f7670a1764dc38a8a24831&v=4",
@@ -39,8 +41,8 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function ProjectDetail() {
-  const { id } = useParams() as { id: string };
-  const { data, isFetching } = api.useGetProjectQuery({ id: parseInt(id) });
+  const id = parseInt(useParams().id as string);
+  const { data, isFetching } = api.useGetProjectQuery({ id });
   const setDeleteProject = api.useDeleteProjectMutation()[0];
   const navigate = useNavigate();
   const { classes } = useStyles();
@@ -57,7 +59,7 @@ export default function ProjectDetail() {
 
   const handleDelete = async () => {
     try {
-      await setDeleteProject({ id: parseInt(id) }).unwrap();
+      await setDeleteProject({ id }).unwrap();
       navigate("/");
     } catch (e) {
       console.error(e);
@@ -120,30 +122,20 @@ export default function ProjectDetail() {
         <Progress value={(23 / 36) * 100} mt={5} />
 
         <Group position="apart" mt="md">
+          <LikeSection {...{ id, likes: project.likes, isPost: false }} />
+
           <Avatar.Group spacing="sm">
             <Avatar src={avatars[0]} radius="xl" />
             <Avatar src={avatars[1]} radius="xl" />
             <Avatar src={avatars[2]} radius="xl" />
             <Avatar radius="xl">+5</Avatar>
           </Avatar.Group>
-
-          <Group>
-            <ActionIcon variant="default" radius="md" size={36}>
-              <IconHeart
-                size="1.1rem"
-                className={classes.likeBtn}
-                stroke={1.5}
-              />
-            </ActionIcon>
-            {project.likes > 0 ? (
-              <Text className={classes.likes}>좋아요 {project.likes}</Text>
-            ) : null}
-          </Group>
-
+        </Group>
+        <Flex justify="right" mt={10}>
           <Button onClick={handleApply}>
             {isApplied ? "신청 취소하기" : "신청하기"}
           </Button>
-        </Group>
+        </Flex>
       </Box>
       <Dialog
         opened={opened}

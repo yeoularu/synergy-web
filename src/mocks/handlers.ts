@@ -46,6 +46,11 @@ const projects = [
   },
 ];
 
+const user = {
+  likedPosts: [1, 2],
+  likedProjects: [0],
+};
+
 export const handlers = [
   rest.get("/post/postAll", (_, res, ctx) => {
     return res(ctx.status(200), ctx.json({ data: posts }));
@@ -80,6 +85,10 @@ export const handlers = [
     // If authenticated, return a mocked user details
     sessionStorage.setItem("logged-in", "true");
     return res(ctx.status(200));
+  }),
+
+  rest.get("/members/me", (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json(user));
   }),
 
   rest.post("/post/create", async (req, res, ctx) => {
@@ -145,5 +154,33 @@ export const handlers = [
     console.log(projects);
 
     return res(ctx.status(200), ctx.json({ data: projects[index] }));
+  }),
+
+  rest.put("/project/like/:id", (req, res, ctx) => {
+    const { id } = req.params as { id: string };
+    console.log(id);
+    const index = user.likedProjects.findIndex(
+      (projectId) => projectId === parseInt(id)
+    );
+    if (index !== -1) {
+      user.likedProjects.splice(index, 1);
+    } else {
+      user.likedProjects.push(parseInt(id));
+    }
+
+    return res(ctx.status(200));
+  }),
+  rest.put("/post/like/:id", (req, res, ctx) => {
+    const { id } = req.params as { id: string };
+    const index = user.likedPosts.findIndex(
+      (PostId) => PostId === parseInt(id)
+    );
+    if (index !== -1) {
+      user.likedPosts.splice(index, 1);
+    } else {
+      user.likedPosts.push(parseInt(id));
+    }
+
+    return res(ctx.status(200));
   }),
 ];
