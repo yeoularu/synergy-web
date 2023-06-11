@@ -49,7 +49,7 @@ export const api = createApi({
     // User
     getMyInfo: build.query<User, null>({
       query: () => "/members/me",
-      providesTags: ["User"],
+      providesTags: [{ type: "User", id: "LIST" }],
     }),
 
     likePost: build.mutation<void, number>({
@@ -59,7 +59,7 @@ export const api = createApi({
       }),
       invalidatesTags: (result, error, arg) => [
         { type: "Post", id: arg },
-        "User",
+        { type: "User", id: "LIST" },
       ],
     }),
 
@@ -70,7 +70,7 @@ export const api = createApi({
       }),
       invalidatesTags: (result, error, arg) => [
         { type: "Project", id: arg },
-        "User",
+        { type: "User", id: "LIST" },
       ],
     }),
 
@@ -81,9 +81,9 @@ export const api = createApi({
         result
           ? [
               ...result.data.map(({ id }) => ({ type: "Post" as const, id })),
-              "Post",
+              { type: "Post", id: "LIST" },
             ]
-          : ["Post"],
+          : [{ type: "Post", id: "LIST" }],
     }),
 
     createPost: build.mutation<void, { title: string; content: string }>({
@@ -95,7 +95,7 @@ export const api = createApi({
           content: post.content,
         },
       }),
-      invalidatesTags: ["Post"],
+      invalidatesTags: [{ type: "Post", id: "LIST" }],
     }),
 
     deletePost: build.mutation<void, { id: number }>({
@@ -103,7 +103,7 @@ export const api = createApi({
         url: `/post/delete/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Post"],
+      invalidatesTags: [{ type: "Post", id: "LIST" }],
     }),
 
     // Project
@@ -116,9 +116,9 @@ export const api = createApi({
                 type: "Project" as const,
                 id,
               })),
-              "Project",
+              { type: "Project", id: "LIST" },
             ]
-          : ["Project"],
+          : [{ type: "Project", id: "LIST" }],
     }),
 
     createProject: build.mutation<number, Omit<Project, "id" | "likes">>({
@@ -127,15 +127,15 @@ export const api = createApi({
         method: "POST",
         body: project,
       }),
-      invalidatesTags: ["Project"],
+      invalidatesTags: [{ type: "Project", id: "LIST" }],
     }),
 
     getProject: build.query<{ data: Project }, { id: number }>({
       query: ({ id }) => `/project/search/${id}`,
       providesTags: (result) =>
         result
-          ? [{ type: "Project" as const, id: result.data.id }]
-          : ["Project"],
+          ? [{ type: "Project", id: result.data.id }]
+          : [{ type: "Project", id: "LIST" }],
     }),
 
     deleteProject: build.mutation<void, { id: number }>({
@@ -143,7 +143,7 @@ export const api = createApi({
         url: `/project/delete/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Project"],
+      invalidatesTags: [{ type: "Project", id: "LIST" }],
     }),
   }),
 });

@@ -164,8 +164,10 @@ export const handlers = [
     );
     if (index !== -1) {
       user.likedProjects.splice(index, 1);
+      projects.find((project) => project.id === parseInt(id))!.likes--;
     } else {
       user.likedProjects.push(parseInt(id));
+      projects.find((project) => project.id === parseInt(id))!.likes++;
     }
 
     return res(ctx.status(200));
@@ -177,8 +179,10 @@ export const handlers = [
     );
     if (index !== -1) {
       user.likedPosts.splice(index, 1);
+      posts.find((post) => post.id === parseInt(id))!.likes--;
     } else {
       user.likedPosts.push(parseInt(id));
+      posts.find((post) => post.id === parseInt(id))!.likes++;
     }
 
     return res(ctx.status(200));
