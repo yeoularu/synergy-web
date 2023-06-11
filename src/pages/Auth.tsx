@@ -64,7 +64,6 @@ export default function Auth(props: PaperProps) {
               if (type === "register") {
                 try {
                   await setRegister(credentials).unwrap();
-
                   setDialogMessage("✅ 회원가입 성공. 로그인 하세요");
                   dialogOpen();
                   toggle();
@@ -79,6 +78,7 @@ export default function Auth(props: PaperProps) {
               if (type === "login") {
                 try {
                   await setLogin(credentials).unwrap();
+
                   return navigate("/");
                 } catch (error) {
                   setDialogMessage("❌ 로그인 실패");
