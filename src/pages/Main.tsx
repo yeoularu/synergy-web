@@ -12,7 +12,7 @@ export default function Main() {
   const { data: ProjectsData, isFetching: isProjectsFetching } =
     api.useGetAllProjectsQuery(null);
 
-  if (isPostsFetching || isProjectsFetching) return <div>loading...</div>;
+  // if (isPostsFetching || isProjectsFetching) return <div>loading...</div>;
   return (
     <Layout navbarChildren={<Category />}>
       <Stack

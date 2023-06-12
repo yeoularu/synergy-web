@@ -58,7 +58,7 @@ export const api = createApi({
         method: "PUT",
       }),
       invalidatesTags: (result, error, arg) => [
-        { type: "Post", id: arg },
+        { type: "Post", id: String(arg) },
         { type: "User", id: "LIST" },
       ],
     }),
@@ -69,7 +69,7 @@ export const api = createApi({
         method: "PUT",
       }),
       invalidatesTags: (result, error, arg) => [
-        { type: "Project", id: arg },
+        { type: "Project", id: String(arg) },
         { type: "User", id: "LIST" },
       ],
     }),
@@ -80,7 +80,10 @@ export const api = createApi({
       providesTags: (result, error, arg) =>
         result
           ? [
-              ...result.data.map(({ id }) => ({ type: "Post" as const, id })),
+              ...result.data.map(({ id }) => ({
+                type: "Post" as const,
+                id: String(id),
+              })),
               { type: "Post", id: "LIST" },
             ]
           : [{ type: "Post", id: "LIST" }],
@@ -114,7 +117,7 @@ export const api = createApi({
           ? [
               ...result.data.map(({ id }) => ({
                 type: "Project" as const,
-                id,
+                id: String(id),
               })),
               { type: "Project", id: "LIST" },
             ]
@@ -134,7 +137,7 @@ export const api = createApi({
       query: ({ id }) => `/project/search/${id}`,
       providesTags: (result) =>
         result
-          ? [{ type: "Project", id: result.data.id }]
+          ? [{ type: "Project", id: String(result.data.id) }]
           : [{ type: "Project", id: "LIST" }],
     }),
 
