@@ -10,7 +10,7 @@ import {
   rem,
 } from "@mantine/core";
 import { api } from "app/api";
-import LikeSection from "./LikeSection";
+import LikeSection from "../LikeSection";
 
 const useStyles = createStyles((theme) => ({
   card: {

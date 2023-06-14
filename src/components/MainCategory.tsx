@@ -24,7 +24,7 @@ const data = [
   },
 ];
 
-export function Category() {
+export function MainCategory() {
   const [active, setActive] = useState(0);
 
   return (
