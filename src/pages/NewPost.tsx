@@ -24,7 +24,7 @@ export default function NewPost() {
   });
 
   return (
-    <Layout>
+    <>
       <form
         onSubmit={form.onSubmit(async (values) => {
           try {
@@ -64,6 +64,6 @@ export default function NewPost() {
           🚨 글 작성에 실패했습니다.
         </Text>
       </Dialog>
-    </Layout>
+    </>
   );
 }

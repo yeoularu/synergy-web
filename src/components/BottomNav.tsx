@@ -1,5 +1,5 @@
 import { createStyles, Group, rem } from "@mantine/core";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
   inner: {
@@ -47,7 +47,7 @@ interface BottomNavProps {
 }
 
 export function BottomNav({ links }: BottomNavProps) {
-  const activePage = window.location.pathname.split("/")[1];
+  const activePage = useLocation().pathname.split("/")[1];
   const { classes, cx } = useStyles();
 
   const items = links.map((link) => (

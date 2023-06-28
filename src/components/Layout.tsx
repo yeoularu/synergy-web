@@ -10,6 +10,9 @@ import {
 } from "@mantine/core";
 import { HeaderSearch } from "components/HeaderSearch";
 import { BottomNav } from "./BottomNav";
+import { Outlet } from "react-router-dom";
+import { NavbarContent } from "./NavbarContent";
+import AsideContent from "./AsideContent";
 
 const headerLinks = [
   {
@@ -30,17 +33,7 @@ const headerLinks = [
   },
 ];
 
-interface LayoutProps {
-  children: React.ReactNode;
-  navbarChildren?: React.ReactNode;
-  sidebarChildren?: React.ReactNode;
-}
-
-export default function Layout({
-  children,
-  navbarChildren,
-  sidebarChildren,
-}: LayoutProps) {
+export default function Layout() {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
   return (
@@ -64,7 +57,7 @@ export default function Layout({
           withBorder={false}
         >
           <Navbar.Section grow mt="md">
-            {navbarChildren}
+            <NavbarContent />
           </Navbar.Section>
         </Navbar>
       }
@@ -79,7 +72,7 @@ export default function Layout({
             }
             withBorder={false}
           >
-            {sidebarChildren}
+            <AsideContent />
           </Aside>
         </MediaQuery>
       }
@@ -103,7 +96,7 @@ export default function Layout({
         </HeaderSearch>
       }
     >
-      {children}
+      <Outlet />
     </AppShell>
   );
 }

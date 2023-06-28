@@ -1,5 +1,4 @@
 import { api } from "app/api";
-import Layout from "components/Layout";
 import { useParams } from "react-router-dom";
 import {
   Avatar,
@@ -21,7 +20,7 @@ import { IconDots, IconHeart, IconTrash } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
-import LikeSection from "components/LikeSection";
+import LikeSection from "components/like/LikeSection";
 
 const avatars = [
   "https://avatars.githubusercontent.com/u/10353856?s=460&u=88394dfd67727327c1f7670a1764dc38a8a24831&v=4",
@@ -72,7 +71,7 @@ export default function ProjectDetail() {
   };
 
   return (
-    <Layout>
+    <>
       <Box w="100%">
         <Group position="apart">
           <Badge>D{dday < 0 ? dday : `+${dday}`}</Badge>
@@ -148,6 +147,6 @@ export default function ProjectDetail() {
           {isApplied ? "신청하기" : "신청 취소하기"} 완료
         </Text>
       </Dialog>
-    </Layout>
+    </>
   );
 }

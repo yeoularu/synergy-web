@@ -10,7 +10,7 @@ import {
   rem,
 } from "@mantine/core";
 import { api } from "app/api";
-import LikeSection from "../LikeSection";
+import PostLikeSection from "./PostLikeSection";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -98,7 +98,7 @@ export default function PostCard({
       </Card.Section>
 
       <Card.Section className={classes.section}>
-        <LikeSection {...{ id, likes, isPost: true }} />
+        <PostLikeSection {...{ id, likes, isPost: true }} />
       </Card.Section>
     </Card>
   );

@@ -24,7 +24,7 @@ const data = [
   },
 ];
 
-export function MainCategory() {
+export function NavbarContent() {
   const [active, setActive] = useState(0);
 
   return (
