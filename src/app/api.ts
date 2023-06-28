@@ -67,6 +67,11 @@ export const api = createApi({
           : [{ type: "Post", id: "LIST" }],
     }),
 
+    getPost: build.query<{ data: Post }, number>({
+      query: (id) => `/post/${id}`,
+      providesTags: (result, error, arg) => [{ type: "Post", id: String(arg) }],
+    }),
+
     createPost: build.mutation<void, { title: string; content: string }>({
       query: (post) => ({
         url: "/post/create",
@@ -84,7 +89,9 @@ export const api = createApi({
         url: `/post/delete/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [{ type: "Post", id: "LIST" }],
+      invalidatesTags: (result, error, arg) => [
+        { type: "Post", id: String(arg.id) },
+      ],
     }),
 
     // Project
@@ -124,7 +131,9 @@ export const api = createApi({
         url: `/project/delete/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [{ type: "Project", id: "LIST" }],
+      invalidatesTags: (result, error, arg) => [
+        { type: "Post", id: String(arg.id) },
+      ],
     }),
   }),
 });

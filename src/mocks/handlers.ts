@@ -126,6 +126,14 @@ export const handlers = [
     return res(ctx.status(200));
   }),
 
+  rest.get("/post/:id", (req, res, ctx) => {
+    const { id } = req.params as { id: string };
+    return res(
+      ctx.status(200),
+      ctx.json({ data: posts.find((post) => post.id === parseInt(id)) })
+    );
+  }),
+
   rest.put("/post/like/:id", (req, res, ctx) => {
     const { id } = req.params as { id: string };
     const index = user.likedPosts.findIndex(
@@ -164,6 +172,16 @@ export const handlers = [
 
   rest.get("/project/projectAll", (_, res, ctx) => {
     return res(ctx.status(200), ctx.json({ data: projects }));
+  }),
+
+  rest.get("/project/:id", (req, res, ctx) => {
+    const { id } = req.params as { id: string };
+    return res(
+      ctx.status(200),
+      ctx.json({
+        data: projects.find((project) => project.id === parseInt(id)),
+      })
+    );
   }),
 
   rest.delete("/project/delete/:id", (req, res, ctx) => {

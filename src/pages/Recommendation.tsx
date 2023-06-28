@@ -4,13 +4,11 @@ import { Link } from "react-router-dom";
 import PostList from "components/post/PostList";
 import ProjectList from "components/project/ProjectList";
 
-export default function Main() {
-  const { data: postsData, isFetching: isPostsFetching } =
-    api.useGetAllPostsQuery(null);
+export default function Recommendation() {
   const { data: projectsData, isFetching: isProjectsFetching } =
     api.useGetAllProjectsQuery(null);
 
-  if (isPostsFetching || isProjectsFetching) return <div>loading...</div>;
+  if (isProjectsFetching) return <div>loading...</div>;
   return (
     <Stack
       mih={300}
@@ -29,7 +27,7 @@ export default function Main() {
         </Link>
       </Group>
 
-      <PostList posts={postsData?.data} />
+      <PostList />
       <ProjectList projects={projectsData?.data} />
     </Stack>
   );

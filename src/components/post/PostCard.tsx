@@ -33,22 +33,14 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-interface PostCardProps {
-  id: number;
-  title: string;
-  content: string;
-  author: string;
-  likes: number;
-}
-
-export default function PostCard({
-  id,
-  title,
-  content,
-  author,
-  likes,
-}: PostCardProps) {
+export default function PostCard({ id }: { id: number }) {
   const { classes } = useStyles();
+  const { post } = api.useGetAllPostsQuery(null, {
+    selectFromResult: ({ data }) => ({
+      post: data?.data.find((post) => post.id === id),
+    }),
+  });
+
   const setDeletePost = api.useDeletePostMutation()[0];
 
   const handleDelete = async () => {
@@ -59,13 +51,15 @@ export default function PostCard({
     }
   };
 
+  if (!post) return null;
+
   return (
     <Card withBorder radius="md" p="md" className={classes.card}>
       <Card.Section className={classes.section}>
         <Group position="apart">
           <Group>
             <Avatar radius="xl" />
-            <Text>{author}</Text>
+            <Text>{post.author}</Text>
           </Group>
 
           <Menu withinPortal position="bottom-end" shadow="sm">
@@ -91,14 +85,14 @@ export default function PostCard({
       <Card.Section className={classes.section}>
         <Group position="apart">
           <Text fz="lg" fw={500}>
-            {title}
+            {post.title}
           </Text>
         </Group>
-        <Text mt="xs">{content}</Text>
+        <Text mt="xs">{post.content}</Text>
       </Card.Section>
 
       <Card.Section className={classes.section}>
-        <PostLikeSection {...{ id, likes, isPost: true }} />
+        <PostLikeSection {...{ id, likes: post.likes }} />
       </Card.Section>
     </Card>
   );

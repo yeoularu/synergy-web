@@ -9,7 +9,7 @@ import {
   NewPost,
   NewProject,
   ProjectDetail,
-  Main,
+  Recommendation,
 } from "pages";
 import {
   BrowserRouter,
@@ -18,7 +18,7 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
-import Layout from "components/Layout";
+import Layout from "components/ui/Layout";
 
 const PrivateRoutes = () => {
   const auth = sessionStorage.getItem("logged-in");
@@ -33,7 +33,7 @@ export default function App() {
           <Routes>
             <Route element={<PrivateRoutes />}>
               <Route path="/" element={<Layout />}>
-                <Route index element={<Main />} />
+                <Route index element={<Recommendation />} />
                 <Route path="people" element={<People />} />
                 <Route path="chat" element={<Chat />} />
                 <Route path="notification" element={<Notification />} />

@@ -2,20 +2,23 @@ import { Post } from "types";
 import PostCard from "./PostCard";
 import { Key } from "react";
 import { Stack } from "@mantine/core";
+import { api } from "app/api";
 
-interface PostListProps {
-  posts: Post[] | undefined;
-}
+function PostList() {
+  const { data, isLoading, isSuccess, isError, error } =
+    api.useGetAllPostsQuery(null);
 
-function PostList({ posts }: PostListProps) {
-  if (!posts) return <div>loading...</div>;
-  return (
-    <Stack w="100%">
-      {posts.map((post: Post, i: Key | null | undefined) => (
-        <PostCard key={i} {...post}></PostCard>
-      ))}
-    </Stack>
-  );
+  let content;
+  if (isLoading) {
+    content = <p>"Loading..."</p>;
+  } else if (isSuccess) {
+    content = data.data.map(({ id }, i) => <PostCard key={i} id={id} />);
+  } else if (isError) {
+    console.error(error);
+    content = <p>error! check the console message</p>;
+  }
+
+  return <Stack w="100%">{content}</Stack>;
 }
 
 export default PostList;

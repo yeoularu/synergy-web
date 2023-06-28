@@ -8,7 +8,7 @@ import {
   Burger,
   useMantineTheme,
 } from "@mantine/core";
-import { HeaderSearch } from "components/HeaderSearch";
+import { HeaderSearch } from "components/ui/HeaderSearch";
 import { BottomNav } from "./BottomNav";
 import { Outlet } from "react-router-dom";
 import { NavbarContent } from "./NavbarContent";
