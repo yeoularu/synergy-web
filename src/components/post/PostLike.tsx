@@ -1,7 +1,6 @@
 import { createStyles, Group, ActionIcon, Text } from "@mantine/core";
 import { IconHeart, IconHeartFilled } from "@tabler/icons-react";
 import { api } from "app/api";
-import { useState } from "react";
 
 const useStyles = createStyles((theme) => ({
   likesNumber: {
@@ -14,13 +13,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default function PostLikeSection({
-  id,
-  likes,
-}: {
-  id: number;
-  likes: number;
-}) {
+export default function PostLike({ id, likes }: { id: number; likes: number }) {
   const { classes } = useStyles();
 
   const isLiked = api.useGetMyInfoQuery(null).data?.likedPosts.includes(id);

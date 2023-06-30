@@ -37,7 +37,9 @@ export default function App() {
                 <Route path="people" element={<People />} />
                 <Route path="chat" element={<Chat />} />
                 <Route path="notification" element={<Notification />} />
-                <Route path="project/:id" element={<ProjectDetail />} />
+                <Route path="project">
+                  <Route path=":id" element={<ProjectDetail />} />
+                </Route>
                 <Route path="new/post" element={<NewPost />} />
                 <Route path="new/project" element={<NewProject />} />
               </Route>

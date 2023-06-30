@@ -10,7 +10,7 @@ import {
   rem,
 } from "@mantine/core";
 import { api } from "app/api";
-import PostLikeSection from "./PostLikeSection";
+import PostLikeSection from "./PostLike";
 
 const useStyles = createStyles((theme) => ({
   card: {

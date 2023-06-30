@@ -1,6 +1,4 @@
-import { Post } from "types";
 import PostCard from "./PostCard";
-import { Key } from "react";
 import { Stack } from "@mantine/core";
 import { api } from "app/api";
 

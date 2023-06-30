@@ -5,10 +5,6 @@ import PostList from "components/post/PostList";
 import ProjectList from "components/project/ProjectList";
 
 export default function Recommendation() {
-  const { data: projectsData, isFetching: isProjectsFetching } =
-    api.useGetAllProjectsQuery(null);
-
-  if (isProjectsFetching) return <div>loading...</div>;
   return (
     <Stack
       mih={300}
@@ -28,7 +24,7 @@ export default function Recommendation() {
       </Group>
 
       <PostList />
-      <ProjectList projects={projectsData?.data} />
+      <ProjectList />
     </Stack>
   );
 }

@@ -1,21 +1,22 @@
-import { Project } from "types";
 import ProjectCard from "./ProjectCard";
-import { Key } from "react";
 import { Stack } from "@mantine/core";
+import { api } from "app/api";
 
-interface ProjectListProps {
-  projects: Project[] | undefined;
-}
+function ProjectList() {
+  const { data, isLoading, isSuccess, isError, error } =
+    api.useGetAllProjectsQuery(null);
 
-function ProjectList({ projects }: ProjectListProps) {
-  if (!projects) return <div>loading...</div>;
-  return (
-    <Stack w="100%">
-      {projects.map((project: Project, i: Key | null | undefined) => (
-        <ProjectCard key={i} {...project}></ProjectCard>
-      ))}
-    </Stack>
-  );
+  let content;
+  if (isLoading) {
+    content = <p>"Loading..."</p>;
+  } else if (isSuccess) {
+    content = data.data.map(({ id }, i) => <ProjectCard key={i} id={id} />);
+  } else if (isError) {
+    console.error(error);
+    content = <p>error! check the console message</p>;
+  }
+
+  return <Stack w="100%">{content}</Stack>;
 }
 
 export default ProjectList;
