@@ -1,4 +1,4 @@
-import Main from "./Main";
+import Recommendation from "./Recommendation";
 import People from "./People";
 import Chat from "./Chat";
 import Notification from "./Notification";
@@ -8,7 +8,7 @@ import NewPost from "./NewPost";
 import NewProject from "./NewProject";
 
 export {
-  Main,
+  Recommendation,
   People,
   Chat,
   Notification,

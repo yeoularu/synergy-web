@@ -9,7 +9,7 @@ import {
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { api } from "app/api";
-import Layout from "components/Layout";
+import Layout from "components/ui/Layout";
 import { useNavigate } from "react-router-dom";
 
 export default function NewPost() {
@@ -24,7 +24,7 @@ export default function NewPost() {
   });
 
   return (
-    <Layout>
+    <>
       <form
         onSubmit={form.onSubmit(async (values) => {
           try {
@@ -64,6 +64,6 @@ export default function NewPost() {
           🚨 글 작성에 실패했습니다.
         </Text>
       </Dialog>
-    </Layout>
+    </>
   );
 }

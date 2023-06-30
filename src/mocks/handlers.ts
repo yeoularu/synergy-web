@@ -23,6 +23,13 @@ const posts = [
     author: "Yihua",
     likes: 33,
   },
+  {
+    id: 3,
+    title: "4 post",
+    content: "4!",
+    author: "12345",
+    likes: 0,
+  },
 ];
 
 const projects = [
@@ -52,9 +59,7 @@ const user = {
 };
 
 export const handlers = [
-  rest.get("/post/postAll", (_, res, ctx) => {
-    return res(ctx.status(200), ctx.json({ data: posts }));
-  }),
+  // User
 
   rest.post("/api/v1/members/join", async (req, res, ctx) => {
     // error test
@@ -91,6 +96,8 @@ export const handlers = [
     return res(ctx.status(200), ctx.json(user));
   }),
 
+  // Post
+
   rest.post("/post/create", async (req, res, ctx) => {
     const { subject, content } = await req.json();
     if (subject === "error") return res(ctx.status(400));
@@ -106,6 +113,10 @@ export const handlers = [
     return res(ctx.status(200));
   }),
 
+  rest.get("/post/postAll", (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json({ data: posts }));
+  }),
+
   rest.delete("/post/delete/:id", (req, res, ctx) => {
     const { id } = req.params as { id: string };
     const index = posts.findIndex((post) => post.id === parseInt(id));
@@ -115,6 +126,31 @@ export const handlers = [
     return res(ctx.status(200));
   }),
 
+  rest.get("/post/:id", (req, res, ctx) => {
+    const { id } = req.params as { id: string };
+    return res(
+      ctx.status(200),
+      ctx.json({ data: posts.find((post) => post.id === parseInt(id)) })
+    );
+  }),
+
+  rest.put("/post/like/:id", (req, res, ctx) => {
+    const { id } = req.params as { id: string };
+    const index = user.likedPosts.findIndex(
+      (PostId) => PostId === parseInt(id)
+    );
+    if (index !== -1) {
+      user.likedPosts.splice(index, 1);
+      posts.find((post) => post.id === parseInt(id))!.likes--;
+    } else {
+      user.likedPosts.push(parseInt(id));
+      posts.find((post) => post.id === parseInt(id))!.likes++;
+    }
+
+    return res(ctx.status(200));
+  }),
+
+  // Project
   rest.post("/project/create", async (req, res, ctx) => {
     const { name, content, field, createDate, endDate } = await req.json();
     if (name === "error") return res(ctx.status(400));
@@ -136,6 +172,16 @@ export const handlers = [
 
   rest.get("/project/projectAll", (_, res, ctx) => {
     return res(ctx.status(200), ctx.json({ data: projects }));
+  }),
+
+  rest.get("/project/:id", (req, res, ctx) => {
+    const { id } = req.params as { id: string };
+    return res(
+      ctx.status(200),
+      ctx.json({
+        data: projects.find((project) => project.id === parseInt(id)),
+      })
+    );
   }),
 
   rest.delete("/project/delete/:id", (req, res, ctx) => {
@@ -168,21 +214,6 @@ export const handlers = [
     } else {
       user.likedProjects.push(parseInt(id));
       projects.find((project) => project.id === parseInt(id))!.likes++;
-    }
-
-    return res(ctx.status(200));
-  }),
-  rest.put("/post/like/:id", (req, res, ctx) => {
-    const { id } = req.params as { id: string };
-    const index = user.likedPosts.findIndex(
-      (PostId) => PostId === parseInt(id)
-    );
-    if (index !== -1) {
-      user.likedPosts.splice(index, 1);
-      posts.find((post) => post.id === parseInt(id))!.likes--;
-    } else {
-      user.likedPosts.push(parseInt(id));
-      posts.find((post) => post.id === parseInt(id))!.likes++;
     }
 
     return res(ctx.status(200));

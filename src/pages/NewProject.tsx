@@ -10,7 +10,6 @@ import {
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { api } from "app/api";
-import Layout from "components/Layout";
 import { useNavigate } from "react-router-dom";
 import { DateInput } from "@mantine/dates";
 
@@ -40,7 +39,7 @@ export default function NewProject() {
   ];
 
   return (
-    <Layout>
+    <>
       <form
         onSubmit={form.onSubmit(async (values) => {
           try {
@@ -104,6 +103,6 @@ export default function NewProject() {
           🚨 프로젝트 생성에 실패했습니다.
         </Text>
       </Dialog>
-    </Layout>
+    </>
   );
 }

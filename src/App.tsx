@@ -1,8 +1,7 @@
 import { Provider } from "react-redux";
 import { MantineProvider } from "@mantine/core";
-import { store } from "./store";
+import { store } from "app/store";
 import {
-  Main,
   People,
   Chat,
   Notification,
@@ -10,6 +9,7 @@ import {
   NewPost,
   NewProject,
   ProjectDetail,
+  Recommendation,
 } from "pages";
 import {
   BrowserRouter,
@@ -18,6 +18,7 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
+import Layout from "components/ui/Layout";
 
 const PrivateRoutes = () => {
   const auth = sessionStorage.getItem("logged-in");
@@ -31,14 +32,19 @@ export default function App() {
         <BrowserRouter>
           <Routes>
             <Route element={<PrivateRoutes />}>
-              <Route path="/" element={<Main />} />
-              <Route path="/people" element={<People />} />
-              <Route path="/chat" element={<Chat />} />
-              <Route path="/notification" element={<Notification />} />
-              <Route path="/project/:id" element={<ProjectDetail />} />
-              <Route path="/new/post" element={<NewPost />} />
-              <Route path="/new/project" element={<NewProject />} />
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Recommendation />} />
+                <Route path="people" element={<People />} />
+                <Route path="chat" element={<Chat />} />
+                <Route path="notification" element={<Notification />} />
+                <Route path="project">
+                  <Route path=":id" element={<ProjectDetail />} />
+                </Route>
+                <Route path="new/post" element={<NewPost />} />
+                <Route path="new/project" element={<NewProject />} />
+              </Route>
             </Route>
+
             <Route path="/auth" element={<Auth />} />
           </Routes>
         </BrowserRouter>
