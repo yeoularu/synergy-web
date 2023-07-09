@@ -7,7 +7,9 @@ import {
   Group,
   Title,
   Button,
+  createStyles,
 } from "@mantine/core";
+import { api } from "app/api";
 import { Link } from "react-router-dom";
 
 const avatars = [
@@ -16,23 +18,30 @@ const avatars = [
   "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80",
 ];
 
-interface ProjectCardProps {
-  id: number;
-  name: string;
-  content: string;
-  field: string[];
-  createDate: string;
-  endDate: string;
-}
+const useStyles = createStyles((theme) => ({
+  likesNumber: {
+    fontSize: theme.fontSizes.sm,
+    color: theme.colors.gray[6],
+  },
 
-export default function ProjectCard({
-  id,
-  name,
-  content,
-  field,
-  createDate,
-  endDate,
-}: ProjectCardProps) {
+  likeIcon: {
+    color: theme.colors.red[6],
+  },
+}));
+
+export default function ProjectCard({ id }: { id: number }) {
+  const { classes } = useStyles();
+
+  const { project } = api.useGetAllProjectsQuery(null, {
+    selectFromResult: ({ data }) => ({
+      project: data?.data.find((project) => project.id === id),
+    }),
+  });
+
+  if (!project) return null;
+
+  const { name, content, field, createDate, endDate, likes } = project;
+
   const today = new Date();
   const createDay = new Date(createDate);
   const dday = Math.floor(
@@ -77,9 +86,14 @@ export default function ProjectCard({
           <Avatar radius="xl">+5</Avatar>
         </Avatar.Group>
 
-        <Link to={`/project/${id}`}>
-          <Button>자세히 보기</Button>
-        </Link>
+        <Group>
+          {likes > 0 ? (
+            <Text className={classes.likesNumber}>좋아요 {likes}</Text>
+          ) : null}
+          <Link to={`/project/${id}`}>
+            <Button>자세히 보기</Button>
+          </Link>
+        </Group>
       </Group>
     </Card>
   );

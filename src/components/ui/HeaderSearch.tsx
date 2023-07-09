@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import { ReactComponent as Logo } from "assets/logo.svg";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -64,7 +64,8 @@ interface HeaderSearchProps {
 }
 
 export function HeaderSearch({ links, children }: HeaderSearchProps) {
-  const activePage = window.location.pathname.split("/")[1];
+  const activePage = useLocation().pathname.split("/")[1];
+  console.log(activePage);
   const { classes, cx } = useStyles();
 
   const items = links.map((link) => (

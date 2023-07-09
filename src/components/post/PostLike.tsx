@@ -1,7 +1,6 @@
 import { createStyles, Group, ActionIcon, Text } from "@mantine/core";
 import { IconHeart, IconHeartFilled } from "@tabler/icons-react";
 import { api } from "app/api";
-import { useState } from "react";
 
 const useStyles = createStyles((theme) => ({
   likesNumber: {
@@ -14,24 +13,12 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-interface LikeSectionProps {
-  id: number;
-  likes: number;
-  isPost: boolean;
-}
-
-export default function LikeSection({ id, likes, isPost }: LikeSectionProps) {
+export default function PostLike({ id, likes }: { id: number; likes: number }) {
   const { classes } = useStyles();
 
-  const myInfo = api.useGetMyInfoQuery(null).data;
+  const isLiked = api.useGetMyInfoQuery(null).data?.likedPosts.includes(id);
 
-  const isLiked = isPost
-    ? myInfo?.likedPosts.includes(id)
-    : myInfo?.likedProjects.includes(id);
-
-  const setToggleLike = isPost
-    ? api.useLikePostMutation()[0]
-    : api.useLikeProjectMutation()[0];
+  const setToggleLike = api.useLikePostMutation()[0];
 
   return (
     <Group>

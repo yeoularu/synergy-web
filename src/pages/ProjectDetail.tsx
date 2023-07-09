@@ -1,5 +1,4 @@
 import { api } from "app/api";
-import Layout from "components/Layout";
 import { useParams } from "react-router-dom";
 import {
   Avatar,
@@ -14,14 +13,13 @@ import {
   Menu,
   rem,
   Dialog,
-  createStyles,
   Flex,
 } from "@mantine/core";
 import { IconDots, IconHeart, IconTrash } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
-import LikeSection from "components/LikeSection";
+import ProjectLike from "components/project/ProjectLike";
 
 const avatars = [
   "https://avatars.githubusercontent.com/u/10353856?s=460&u=88394dfd67727327c1f7670a1764dc38a8a24831&v=4",
@@ -29,23 +27,11 @@ const avatars = [
   "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80",
 ];
 
-const useStyles = createStyles((theme) => ({
-  likes: {
-    fontSize: theme.fontSizes.sm,
-    color: theme.colors.gray[6],
-  },
-
-  likeBtn: {
-    color: theme.colors.red[6],
-  },
-}));
-
 export default function ProjectDetail() {
   const id = parseInt(useParams().id as string);
   const { data, isFetching } = api.useGetProjectQuery({ id });
   const setDeleteProject = api.useDeleteProjectMutation()[0];
   const navigate = useNavigate();
-  const { classes } = useStyles();
   const [isApplied, setIsApplied] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
   if (isFetching) return <div>loading...</div>;
@@ -72,7 +58,7 @@ export default function ProjectDetail() {
   };
 
   return (
-    <Layout>
+    <>
       <Box w="100%">
         <Group position="apart">
           <Badge>D{dday < 0 ? dday : `+${dday}`}</Badge>
@@ -122,7 +108,7 @@ export default function ProjectDetail() {
         <Progress value={(23 / 36) * 100} mt={5} />
 
         <Group position="apart" mt="md">
-          <LikeSection {...{ id, likes: project.likes, isPost: false }} />
+          <ProjectLike {...{ id, likes: project.likes, isPost: false }} />
 
           <Avatar.Group spacing="sm">
             <Avatar src={avatars[0]} radius="xl" />
@@ -148,6 +134,6 @@ export default function ProjectDetail() {
           {isApplied ? "신청하기" : "신청 취소하기"} 완료
         </Text>
       </Dialog>
-    </Layout>
+    </>
   );
 }
