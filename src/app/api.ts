@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Post, Project, User } from "types";
+import { Post, Project, MyInfo } from "types";
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_URL,
   }),
-  tagTypes: ["Post", "Project", "User"],
+  tagTypes: ["Post", "Project", "MyInfo"],
   endpoints: (build) => ({
     // Auth
     register: build.mutation<void, { email: string; password: string }>({
@@ -24,10 +24,10 @@ export const api = createApi({
       }),
     }),
 
-    // User
-    getMyInfo: build.query<User, null>({
+    // MyInfo
+    getMyInfo: build.query<MyInfo, null>({
       query: () => "/members/me",
-      providesTags: [{ type: "User", id: "LIST" }],
+      providesTags: [{ type: "MyInfo", id: "LIST" }],
     }),
 
     likePost: build.mutation<void, number>({
@@ -37,7 +37,7 @@ export const api = createApi({
       }),
       invalidatesTags: (result, error, arg) => [
         { type: "Post", id: String(arg) },
-        { type: "User", id: "LIST" },
+        { type: "MyInfo", id: "LIST" },
       ],
     }),
 
@@ -48,7 +48,7 @@ export const api = createApi({
       }),
       invalidatesTags: (result, error, arg) => [
         { type: "Project", id: String(arg) },
-        { type: "User", id: "LIST" },
+        { type: "MyInfo", id: "LIST" },
       ],
     }),
 

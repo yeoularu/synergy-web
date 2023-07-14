@@ -53,14 +53,57 @@ const projects = [
   },
 ];
 
+const chatMessages = [
+  {
+    id: 0,
+    type: "TALK",
+    roomId: 0,
+    message: "hello",
+    senderId: 0,
+    sendTime: "2021-09-01T12:00:00",
+  },
+  {
+    id: 1,
+    type: "TALK",
+    roomId: 0,
+    message: "hi",
+    senderId: 0,
+    sendTime: "2021-09-01T12:00:01",
+  },
+  {
+    id: 2,
+    type: "TALK",
+    roomId: 1,
+    message: "hello",
+    senderId: 1,
+    sendTime: "2023-07-13T12:00:00",
+  },
+  {
+    id: 3,
+    type: "ENTER",
+    roomId: 1,
+    message: "hello",
+    senderId: 1,
+    sendTime: "2023-07-13T12:00:00",
+  },
+  {
+    id: 4,
+    type: "TALK",
+    roomId: 1,
+    message: "yo",
+    senderId: 1,
+    sendTime: "2023-07-14T12:34:56",
+  },
+];
+
 const user = {
   likedPosts: [1, 2],
   likedProjects: [0],
+  chatMessages: chatMessages,
 };
 
 export const handlers = [
   // User
-
   rest.post("/api/v1/members/join", async (req, res, ctx) => {
     // error test
     const { email } = await req.json();
