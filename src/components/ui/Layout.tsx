@@ -13,6 +13,7 @@ import { BottomNav } from "./BottomNav";
 import { Outlet } from "react-router-dom";
 import { NavbarContent } from "./NavbarContent";
 import AsideContent from "./AsideContent";
+import useStompClient from "hooks/useStompClient";
 
 const headerLinks = [
   {
@@ -36,6 +37,7 @@ const headerLinks = [
 export default function Layout() {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
+
   return (
     <AppShell
       styles={{

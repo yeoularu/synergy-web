@@ -17,7 +17,6 @@ import {
   Routes,
 } from "react-router-dom";
 import Layout from "components/ui/Layout";
-import useStompClient from "hooks/useStompClient";
 import ChatRoom from "components/chat/ChatRoom";
 
 const PrivateRoutes = () => {
@@ -26,8 +25,6 @@ const PrivateRoutes = () => {
 };
 
 export default function App() {
-  useStompClient("ws://localhost:15674/ws", "/topic/chat");
-
   return (
     <MantineProvider withGlobalStyles withNormalizeCSS>
       <BrowserRouter>

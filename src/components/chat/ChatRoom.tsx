@@ -25,17 +25,15 @@ export default function ChatRoom() {
     oldMessages = <p>error! check the console message</p>;
   }
 
-  const newMessages = useSelector((state: RootState) => state.stomp.messages);
+  const newMessages = useSelector((state: RootState) => state.stomp.messages)
+    .filter((message) => message.topic === "/topic/" + id)
+    .map((message, i) => <div key={i}>{message.body}</div>);
 
   return (
     <Stack h="100%">
       <div>{oldMessages}</div>
-      <div>
-        {newMessages.map((message, index) => (
-          <div key={index}>{message}</div>
-        ))}
-      </div>
-      <ChatInput />
+      <div>{newMessages}</div>
+      <ChatInput chatRoomId={Number(id)} />
     </Stack>
   );
 }

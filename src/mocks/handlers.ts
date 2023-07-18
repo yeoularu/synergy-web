@@ -97,6 +97,8 @@ const chatMessages = [
 ];
 
 const user = {
+  id: 0,
+  name: "yeoularu",
   likedPosts: [1, 2],
   likedProjects: [0],
   chatMessages: chatMessages,
