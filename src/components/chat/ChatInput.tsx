@@ -1,17 +1,21 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { TextInput, ActionIcon, useMantineTheme } from "@mantine/core";
 import { IconSend } from "@tabler/icons-react";
-import useStompClient from "hooks/useStompClient";
+
+import { WebSocketContext } from "components/ui/Layout";
 
 export function ChatInput({ chatRoomId }: { chatRoomId: number }) {
   const theme = useMantineTheme();
   const [text, setText] = useState("");
 
-  const { sendMessage } = useStompClient();
+  const client = useContext(WebSocketContext);
 
   const handleSend = () => {
     if (text.trim() !== "") {
-      sendMessage(String(chatRoomId), text);
+      client?.publish({
+        destination: "/topic/" + String(chatRoomId),
+        body: text,
+      });
       setText("");
     }
   };
