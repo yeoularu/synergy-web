@@ -53,55 +53,85 @@ const projects = [
   },
 ];
 
-const chatMessages = [
+const chatRooms = [
   {
-    id: 0,
-    type: "TALK",
     roomId: 0,
-    message: "hello",
-    senderId: 0,
-    sendTime: "2021-09-01T12:00:00",
+    participantIds: [0, 1],
+    messages: [
+      {
+        id: 0,
+        type: "TALK",
+        roomId: 0,
+        message: "hello",
+        senderId: 1,
+        sendTime: "2021-09-01T12:00:00",
+      },
+      {
+        id: 1,
+        type: "TALK",
+        roomId: 0,
+        message: "hi",
+        senderId: 0,
+        sendTime: "2021-09-01T12:00:01",
+      },
+    ],
   },
   {
+    roomId: 1,
+    participantIds: [0, 2],
+    messages: [
+      {
+        id: 2,
+        type: "TALK",
+        roomId: 1,
+        message: "hello",
+        senderId: 0,
+        sendTime: "2023-07-13T12:00:00",
+      },
+      {
+        id: 3,
+        type: "ENTER",
+        roomId: 1,
+        message: "hello",
+        senderId: 2,
+        sendTime: "2023-07-13T12:00:00",
+      },
+      {
+        id: 4,
+        type: "TALK",
+        roomId: 1,
+        message: "yo",
+        senderId: 2,
+        sendTime: "2023-07-14T12:34:56",
+      },
+    ],
+  },
+];
+
+const users = [
+  {
     id: 1,
-    type: "TALK",
-    roomId: 0,
-    message: "hi",
-    senderId: 0,
-    sendTime: "2021-09-01T12:00:01",
+    image:
+      "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80",
+    name: "시너지유저1",
+    email: "hspoonlicker@outlook.com",
   },
   {
     id: 2,
-    type: "TALK",
-    roomId: 1,
-    message: "hello",
-    senderId: 1,
-    sendTime: "2023-07-13T12:00:00",
-  },
-  {
-    id: 3,
-    type: "ENTER",
-    roomId: 1,
-    message: "hello",
-    senderId: 1,
-    sendTime: "2023-07-13T12:00:00",
-  },
-  {
-    id: 4,
-    type: "TALK",
-    roomId: 1,
-    message: "yo",
-    senderId: 1,
-    sendTime: "2023-07-14T12:34:56",
+    image: "https://avatars.githubusercontent.com/u/109144975?v=4",
+    name: "시너지유저2",
+    email: "dfjidjfi@gmail.com",
   },
 ];
 
 const user = {
   id: 0,
   name: "yeoularu",
+  image: "https://avatars.githubusercontent.com/u/48755175?v=4",
+  email: "yeoularu@gmail.com",
   likedPosts: [1, 2],
   likedProjects: [0],
-  chatMessages: chatMessages,
+  chatRooms: chatRooms,
 };
 
 export const handlers = [
@@ -138,6 +168,13 @@ export const handlers = [
   }),
 
   rest.get("/members/me", (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json(user));
+  }),
+
+  rest.get("/members/:id", (req, res, ctx) => {
+    const { id } = req.params as { id: string };
+    const user = users.find((user) => user.id === Number(id));
+    if (!user) return res(ctx.status(404));
     return res(ctx.status(200), ctx.json(user));
   }),
 

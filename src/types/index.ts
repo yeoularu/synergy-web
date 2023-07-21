@@ -19,12 +19,20 @@ interface Project {
 interface User {
   id: number;
   name: string;
+  email: string;
+  image: string;
 }
 
 interface MyInfo extends User {
   likedPosts: number[];
   likedProjects: number[];
-  chatMessages: ChatMessage[];
+  chatRooms: ChatRoom[];
+}
+
+interface ChatRoom {
+  roomId: number;
+  participantIds: number[];
+  messages: ChatMessage[];
 }
 
 interface ChatMessage {
@@ -36,4 +44,4 @@ interface ChatMessage {
   sendTime: string;
 }
 
-export type { Post, Project, User, MyInfo, ChatMessage };
+export type { Post, Project, User, MyInfo, ChatMessage, ChatRoom };

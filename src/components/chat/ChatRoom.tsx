@@ -17,9 +17,9 @@ export default function ChatRoom() {
   if (isLoading) {
     oldMessages = <p>"Loading..."</p>;
   } else if (isSuccess) {
-    oldMessages = data.chatMessages
-      .filter(({ roomId }) => roomId === Number(id))
-      .map(({ message }, i) => <div key={i}>{message}</div>);
+    oldMessages = data.chatRooms
+      .find((chatRoom) => chatRoom.roomId === Number(id))
+      ?.messages.map(({ message }, i) => <div key={i}>{message}</div>);
   } else if (isError) {
     console.error(error);
     oldMessages = <p>error! check the console message</p>;

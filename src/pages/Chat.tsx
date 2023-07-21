@@ -1,26 +1,37 @@
 import { Stack } from "@mantine/core";
 import { api } from "app/api";
+import { UserButton } from "components/user/UserButton";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export default function Chat() {
-  const { data, isLoading, isSuccess, isError, error } =
-    api.useGetMyInfoQuery(null);
+  const {
+    data: myData,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+  } = api.useGetMyInfoQuery(null);
 
   let content;
   if (isLoading) {
     content = <p>"Loading..."</p>;
-  } else if (isSuccess) {
-    // 차후 신규 메세지 순으로 정렬하도록 기능 추가
-    const uniqueChatRoomIds: Set<number> = new Set();
-    data.chatMessages.forEach(({ roomId }) => uniqueChatRoomIds.add(roomId));
-    content = Array.from(uniqueChatRoomIds).map((roomId, i) => (
-      <Link key={i} to={`${roomId}`}>
-        {roomId}
-      </Link>
-    ));
   } else if (isError) {
     console.error(error);
     content = <p>error! check the console message</p>;
+  } else if (isSuccess) {
+    // 차후 신규 메세지 순으로 정렬하도록 기능 추가
+    content = myData.chatRooms.map(({ roomId, participantIds }, i) => {
+      const partnerId = participantIds.find((id) => id !== myData.id);
+      if (!partnerId)
+        return <p key={i}>대화 상대방의 데이터를 불러오지 못했습니다.</p>;
+
+      return (
+        <Link key={i} to={`${roomId}`}>
+          <UserButton userId={partnerId} />
+        </Link>
+      );
+    });
   }
   return <Stack>{content}</Stack>;
 }
