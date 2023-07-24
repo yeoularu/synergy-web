@@ -39,7 +39,7 @@ interface ChatMessage {
   id: number;
   type: string;
   roomId: number;
-  message: string;
+  text: string;
   senderId: number;
   sendTime: string;
 }

@@ -4,6 +4,7 @@ import { MediaQuery, Stack } from "@mantine/core";
 import { ChatInput } from "./ChatInput";
 import { redirect, useParams } from "react-router-dom";
 import { api } from "app/api";
+import ChatMessageCard from "./ChatMessageCard";
 
 export default function ChatRoom() {
   const { id } = useParams();
@@ -19,7 +20,10 @@ export default function ChatRoom() {
   } else if (isSuccess) {
     oldMessages = data.chatRooms
       .find((chatRoom) => chatRoom.roomId === Number(id))
-      ?.messages.map(({ message }, i) => <div key={i}>{message}</div>);
+      ?.messages.map(({ text, senderId }) => {
+        const fromMe = senderId === data.id;
+        return <ChatMessageCard {...{ text, fromMe }} />;
+      });
   } else if (isError) {
     console.error(error);
     oldMessages = <p>error! check the console message</p>;
@@ -27,14 +31,18 @@ export default function ChatRoom() {
 
   const newMessages = useSelector((state: RootState) => state.stomp.messages)
     .filter((message) => message.topic === "/topic/" + id)
-    .map((message, i) => <div key={i}>{message.body}</div>);
+    .map((message) => {
+      const { text, senderId } = JSON.parse(message.body);
+      const fromMe = senderId === data?.id;
+      return <ChatMessageCard {...{ text, fromMe }} />;
+    });
 
   return (
-    <Stack h="100%">
-      <div>{oldMessages}</div>
-      <div>{newMessages}</div>
+    <Stack h="100%" sx={() => ({ gap: 5 })}>
+      {oldMessages}
+      {newMessages}
       <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
-        <ChatInput chatRoomId={Number(id)} />
+        <ChatInput roomId={Number(id)} />
       </MediaQuery>
     </Stack>
   );

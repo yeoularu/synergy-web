@@ -10,8 +10,10 @@ import { IconSend } from "@tabler/icons-react";
 
 import { WebSocketContext } from "components/ui/Layout";
 import { useForm } from "@mantine/form";
+import { api } from "app/api";
 
-export function ChatInput({ chatRoomId }: { chatRoomId: number }) {
+export function ChatInput({ roomId }: { roomId: number }) {
+  const { data } = api.useGetMyInfoQuery(null);
   const theme = useMantineTheme();
 
   const form = useForm({
@@ -23,18 +25,25 @@ export function ChatInput({ chatRoomId }: { chatRoomId: number }) {
   const client = useContext(WebSocketContext);
 
   const handleSend = (text: string) => {
-    if (text.trim() !== "") {
+    if (text !== "") {
+      const message = {
+        type: "TALK",
+        roomId,
+        text,
+        senderId: data?.id,
+      };
       client?.publish({
-        destination: "/topic/" + String(chatRoomId),
-        body: text,
+        destination: "/topic/" + String(roomId),
+        body: JSON.stringify(message),
       });
     }
   };
 
   return (
-    <MediaQuery smallerThan="sm" styles={{ bottom: 7, width: "100%" }}>
+    <MediaQuery smallerThan="sm" styles={{ bottom: 6, width: "100%" }}>
       <Affix
         w={{ sm: 400, lg: 600 }}
+        px={5}
         position={{ bottom: 20, left: "50%" }}
         sx={() => ({ transform: "translateX(-50%)" })}
       >
