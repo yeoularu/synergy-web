@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState } from "app/store";
-import { Stack } from "@mantine/core";
+import { MediaQuery, Stack } from "@mantine/core";
 import { ChatInput } from "./ChatInput";
 import { redirect, useParams } from "react-router-dom";
 import { api } from "app/api";
@@ -33,7 +33,9 @@ export default function ChatRoom() {
     <Stack h="100%">
       <div>{oldMessages}</div>
       <div>{newMessages}</div>
-      <ChatInput chatRoomId={Number(id)} />
+      <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
+        <ChatInput chatRoomId={Number(id)} />
+      </MediaQuery>
     </Stack>
   );
 }

@@ -43,7 +43,6 @@ export default function Layout() {
   const [opened, setOpened] = useState(false);
 
   // Stomp Client
-
   const dispatch = useDispatch();
   const brokerURL = import.meta.env.VITE_WEBSOCKET_URL;
   const topics = ["/topic/0", "/topic/1"]; // 테스트용. 서버상태로 관리해야함

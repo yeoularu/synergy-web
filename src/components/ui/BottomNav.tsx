@@ -1,4 +1,5 @@
 import { createStyles, Group, rem } from "@mantine/core";
+import { ChatInput } from "components/chat/ChatInput";
 import { Link, useLocation } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
@@ -47,8 +48,12 @@ interface BottomNavProps {
 }
 
 export function BottomNav({ links }: BottomNavProps) {
-  const activePage = useLocation().pathname.split("/")[1];
+  const location = useLocation().pathname.split("/");
+  const activePage = location[1];
   const { classes, cx } = useStyles();
+
+  if (activePage === "chat" && location[2])
+    return <ChatInput chatRoomId={Number(location[2])} />;
 
   const items = links.map((link) => (
     <Link
