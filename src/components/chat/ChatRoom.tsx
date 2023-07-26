@@ -1,49 +1,91 @@
 import { useSelector } from "react-redux";
 import { RootState } from "app/store";
-import { MediaQuery, Stack } from "@mantine/core";
+import { Box, Group, MediaQuery, Stack, Text } from "@mantine/core";
 import { ChatInput } from "./ChatInput";
 import { redirect, useParams } from "react-router-dom";
 import { api } from "app/api";
 import ChatMessageCard from "./ChatMessageCard";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ChatMessage } from "types";
+import dayjs from "dayjs";
+import { ChatHeader } from "./ChatHeader";
 
 export default function ChatRoom() {
   const { id } = useParams();
   if (!id) {
     redirect("/chat");
   }
-  const { data, isLoading, isSuccess, isError, error } =
-    api.useGetMyInfoQuery(null);
+  const { data, isSuccess, isError, error } = api.useGetMyInfoQuery(null);
 
-  let oldMessages;
-  if (isLoading) {
-    oldMessages = <p>"Loading..."</p>;
-  } else if (isSuccess) {
-    oldMessages = data.chatRooms
-      .find((chatRoom) => chatRoom.roomId === Number(id))
-      ?.messages.map(({ text, senderId }) => {
-        const fromMe = senderId === data.id;
-        return <ChatMessageCard {...{ text, fromMe }} />;
-      });
-  } else if (isError) {
-    console.error(error);
-    oldMessages = <p>error! check the console message</p>;
-  }
+  const messagesEndRef = useRef<null | HTMLDivElement>(null);
+
+  const [oldMessages, setOldMessages] = useState<ChatMessage[]>([]);
+  useEffect(() => {
+    if (isSuccess) {
+      const chatRoom = data.chatRooms.find(
+        (chatRoom) => chatRoom.roomId === Number(id)
+      );
+      if (chatRoom) {
+        setOldMessages([...chatRoom.messages]);
+      }
+    } else if (isError) {
+      console.error(error);
+    }
+  }, [isSuccess, data, id, isError, error]);
 
   const newMessages = useSelector((state: RootState) => state.stomp.messages)
     .filter((message) => message.topic === "/topic/" + id)
     .map((message) => {
-      const { text, senderId } = JSON.parse(message.body);
-      const fromMe = senderId === data?.id;
-      return <ChatMessageCard {...{ text, fromMe }} />;
+      return JSON.parse(message.body);
     });
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(scrollToBottom, [newMessages]);
+
+  const allMessages = [...oldMessages, ...newMessages];
+  const content = allMessages.reduce((acc, cur, i) => {
+    const next = allMessages[i + 1];
+    const { text, senderId, sendTime } = cur;
+    const fromMe = senderId === data?.id;
+
+    const isLast =
+      !next ||
+      next.senderId !== senderId ||
+      dayjs(next.sendTime).diff(sendTime, "minute") > 0;
+    const result = [
+      ...acc,
+      <ChatMessageCard key={i} {...{ text, fromMe, isLast, senderId }} />,
+    ];
+    if (isLast) {
+      const dateFormat =
+        dayjs(sendTime).diff(dayjs(), "year") !== 0
+          ? "MMM D, YYYY, h:m A"
+          : dayjs(sendTime).diff(dayjs(), "day") !== 0
+          ? "MMM D, h:m A"
+          : "h:mm A";
+
+      result.push(
+        <Group spacing="xs" key={i + "time"}>
+          {fromMe ? null : <Box w="2.375rem" />}
+          <Text size="xs" c="dark" ml={fromMe ? "auto" : 0} mb="md">
+            {dayjs(sendTime).format(dateFormat)}
+          </Text>
+        </Group>
+      );
+    }
+
+    return result;
+  }, []);
+
   return (
-    <Stack h="100%" sx={() => ({ gap: 5 })}>
-      {oldMessages}
-      {newMessages}
-      <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
-        <ChatInput roomId={Number(id)} />
-      </MediaQuery>
+    <Stack mb={56} spacing={7}>
+      <ChatHeader roomId={Number(id)} />
+      {content}
+      <ChatInput roomId={Number(id)} />
+      <div ref={messagesEndRef} />
     </Stack>
   );
 }

@@ -8,9 +8,10 @@ import {
 } from "@mantine/core";
 import { IconSend } from "@tabler/icons-react";
 
-import { WebSocketContext } from "components/ui/Layout";
 import { useForm } from "@mantine/form";
 import { api } from "app/api";
+import dayjs from "dayjs";
+import { StompContext } from "app/StompContext";
 
 export function ChatInput({ roomId }: { roomId: number }) {
   const { data } = api.useGetMyInfoQuery(null);
@@ -22,7 +23,7 @@ export function ChatInput({ roomId }: { roomId: number }) {
     },
   });
 
-  const client = useContext(WebSocketContext);
+  const { client } = useContext(StompContext);
 
   const handleSend = (text: string) => {
     if (text !== "") {
@@ -31,8 +32,12 @@ export function ChatInput({ roomId }: { roomId: number }) {
         roomId,
         text,
         senderId: data?.id,
+        sendTime: dayjs().toISOString(),
       };
-      client?.publish({
+
+      if (!client) return console.error("WebSocket is not connected");
+
+      client.publish({
         destination: "/topic/" + String(roomId),
         body: JSON.stringify(message),
       });
@@ -40,10 +45,13 @@ export function ChatInput({ roomId }: { roomId: number }) {
   };
 
   return (
-    <MediaQuery smallerThan="sm" styles={{ bottom: 6, width: "100%" }}>
+    <MediaQuery
+      smallerThan="sm"
+      styles={{ bottom: theme.spacing.xs, width: "100%" }}
+    >
       <Affix
         w={{ sm: 400, lg: 600 }}
-        px={5}
+        px="sm"
         position={{ bottom: 20, left: "50%" }}
         sx={() => ({ transform: "translateX(-50%)" })}
       >
@@ -58,6 +66,8 @@ export function ChatInput({ roomId }: { roomId: number }) {
             radius="xl"
             size="md"
             w="100%"
+            placeholder="메세지를 입력하세요"
+            rightSectionWidth={42}
             rightSection={
               <ActionIcon
                 type="submit"
@@ -69,9 +79,7 @@ export function ChatInput({ roomId }: { roomId: number }) {
                 <IconSend size="1.1rem" stroke={1.5} />
               </ActionIcon>
             }
-            placeholder="메세지를 입력하세요"
-            rightSectionWidth={42}
-          />{" "}
+          />
         </form>
       </Affix>
     </MediaQuery>

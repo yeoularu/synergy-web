@@ -48,12 +48,8 @@ interface BottomNavProps {
 }
 
 export function BottomNav({ links }: BottomNavProps) {
-  const location = useLocation().pathname.split("/");
-  const activePage = location[1];
+  const activePage = useLocation().pathname.split("/")[1];
   const { classes, cx } = useStyles();
-
-  if (activePage === "chat" && location[2])
-    return <ChatInput roomId={Number(location[2])} />;
 
   const items = links.map((link) => (
     <Link

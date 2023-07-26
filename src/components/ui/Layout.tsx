@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import {
   AppShell,
   Navbar,
@@ -10,12 +10,10 @@ import {
 } from "@mantine/core";
 import { HeaderSearch } from "components/ui/HeaderSearch";
 import { BottomNav } from "./BottomNav";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { NavbarContent } from "./NavbarContent";
 import AsideContent from "./AsideContent";
-import { Client } from "@stomp/stompjs";
-import { useDispatch } from "react-redux";
-import { messageReceived } from "app/stompSlice";
+import { StompProvider } from "app/StompContext";
 
 const headerLinks = [
   {
@@ -36,38 +34,16 @@ const headerLinks = [
   },
 ];
 
-export const WebSocketContext = createContext<Client | null>(null);
-
 export default function Layout() {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
-
-  // Stomp Client
-  const dispatch = useDispatch();
-  const brokerURL = import.meta.env.VITE_WEBSOCKET_URL;
-  const topics = ["/topic/0", "/topic/1"]; // 테스트용. 서버상태로 관리해야함
-
-  const client = new Client({
-    brokerURL,
-    debug: (str) => {
-      console.log(str);
-    },
-    reconnectDelay: 5000,
-  });
-
-  useEffect(() => {
-    (client.onConnect = () => {
-      topics.forEach((topic) => {
-        client.subscribe(topic, (message) => {
-          dispatch(messageReceived({ topic, body: message.body }));
-        });
-      });
-    }),
-      client.activate();
-  }, []);
+  const location = useLocation();
+  const isChatRoom =
+    location.pathname.split("/")[1] === "chat" &&
+    location.pathname.split("/")[2] !== undefined;
 
   return (
-    <WebSocketContext.Provider value={client}>
+    <StompProvider>
       <AppShell
         styles={{
           main: {
@@ -112,11 +88,13 @@ export default function Layout() {
           </MediaQuery>
         }
         footer={
-          <MediaQuery largerThan="sm" styles={{ display: "none" }}>
-            <Footer height={56}>
-              <BottomNav links={headerLinks} />
-            </Footer>
-          </MediaQuery>
+          isChatRoom ? undefined : (
+            <MediaQuery largerThan="sm" styles={{ display: "none" }}>
+              <Footer height={56}>
+                <BottomNav links={headerLinks} />
+              </Footer>
+            </MediaQuery>
+          )
         }
         header={
           <HeaderSearch links={headerLinks}>
@@ -133,6 +111,6 @@ export default function Layout() {
       >
         <Outlet />
       </AppShell>
-    </WebSocketContext.Provider>
+    </StompProvider>
   );
 }
