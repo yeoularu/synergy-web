@@ -135,7 +135,7 @@ const users = [
   {
     id: 2,
     image: "https://avatars.githubusercontent.com/u/109144975?v=4",
-    name: "시너지유저2",
+    name: "이종훈",
     email: "dfjidjfi@gmail.com",
   },
 ];

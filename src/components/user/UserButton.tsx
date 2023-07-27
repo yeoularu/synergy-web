@@ -13,7 +13,7 @@ const useStyles = createStyles((theme) => ({
   user: {
     display: "block",
     width: "100%",
-    padding: theme.spacing.md,
+    padding: theme.spacing.xs,
     color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
 
     "&:hover": {
@@ -42,20 +42,19 @@ export function UserButton({ userId, icon, ...others }: UserButtonProps) {
   }
   if (!data) return <p>대화 상대방의 데이터를 불러오지 못했습니다.</p>;
 
-  const { name, email, image } = data;
+  const { name, image } = data;
 
   return (
     <UnstyledButton className={classes.user} {...others}>
-      <Group>
+      <Group spacing="xs">
         <Avatar src={image} radius="xl" />
-
         <div style={{ flex: 1 }}>
           <Text size="sm" weight={500}>
             {name}
           </Text>
 
-          <Text color="dimmed" size="xs">
-            {email}
+          <Text color="dimmed" size="xs" lineClamp={1}>
+            최근 메세지 들어갈 자리
           </Text>
         </div>
 
