@@ -54,16 +54,16 @@ export default function ChatRoom() {
     const isLast =
       !next ||
       next.senderId !== senderId ||
-      dayjs(next.sendTime).diff(sendTime, "minute") > 0;
+      dayjs(next.sendTime).get("minute") !== dayjs(sendTime).get("minute");
     const result = [
       ...acc,
       <ChatMessageCard key={i} {...{ text, fromMe, isLast, senderId }} />,
     ];
     if (isLast) {
       const dateFormat =
-        dayjs(sendTime).diff(dayjs(), "year") !== 0
+        dayjs(sendTime).get("year") !== dayjs().get("year")
           ? "MMM D, YYYY, h:m A"
-          : dayjs(sendTime).diff(dayjs(), "day") !== 0
+          : dayjs(sendTime).get("date") !== dayjs().get("date")
           ? "MMM D, h:m A"
           : "h:mm A";
 
