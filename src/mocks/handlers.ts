@@ -138,6 +138,12 @@ const users = [
     name: "이종훈",
     email: "dfjidjfi@gmail.com",
   },
+  {
+    id: 3,
+    image: "https://avatars.githubusercontent.com/u/69510981?v=4",
+    name: "삼삼삼",
+    email: "3333333333@gmail.com",
+  },
 ];
 
 const user = {
@@ -192,6 +198,18 @@ export const handlers = [
     const user = users.find((user) => user.id === Number(id));
     if (!user) return res(ctx.status(404));
     return res(ctx.status(200), ctx.json(user));
+  }),
+
+  rest.put("/chat/create/:id", (req, res, ctx) => {
+    const { id } = req.params as { id: string };
+    if (!id || !users.find((user) => user.id === Number(id)))
+      return res(ctx.status(400));
+    chatRooms.push({
+      roomId: 3,
+      participantIds: [0, Number(id)],
+      messages: [],
+    });
+    return res(ctx.status(200));
   }),
 
   // Post

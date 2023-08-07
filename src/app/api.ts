@@ -52,6 +52,14 @@ export const api = createApi({
       ],
     }),
 
+    createChatRoom: build.mutation<void, number>({
+      query: (userId) => ({
+        url: `/chat/create/${userId}`,
+        method: "PUT",
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: "MyInfo", id: "LIST" }],
+    }),
+
     // Users
     getUser: build.query<User, number>({
       query: (id) => `/members/${id}`,

@@ -1,7 +1,8 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useRef } from "react";
 import { Client } from "@stomp/stompjs";
 import { useDispatch } from "react-redux";
 import { messageReceived } from "app/stompSlice";
+import { api } from "./api";
 
 interface StompContextProps {
   client: Client | null;
@@ -12,38 +13,48 @@ export const StompContext = createContext<StompContextProps>({ client: null });
 export const StompProvider = ({ children }: { children: JSX.Element }) => {
   const dispatch = useDispatch();
   const brokerURL = import.meta.env.VITE_WEBSOCKET_URL;
-  const topics = ["/topic/0", "/topic/1"]; // 테스트용. 서버상태로 관리해야함
+  const { data } = api.useGetMyInfoQuery(null);
 
-  const [client, setClient] = useState<Client | null>(null);
+  const topics = data?.chatRooms.map(({ roomId }) => `/topic/${roomId}`) || [];
+
+  const clientRef = useRef<Client | null>(null);
+  const isConnected = clientRef.current?.connected;
 
   useEffect(() => {
-    const newClient = new Client({
-      brokerURL,
-      debug: (str) => {
-        console.log(str);
-      },
-      reconnectDelay: 5000,
-      onConnect: () => {
-        topics.forEach((topic) => {
-          newClient.subscribe(topic, (message) => {
-            // Change here
-            dispatch(messageReceived({ topic, body: message.body }));
-          });
+    if (!clientRef.current) {
+      console.log("create new client");
+      clientRef.current = new Client({
+        brokerURL,
+        debug: (str) => {
+          console.log(str);
+        },
+
+        reconnectDelay: 5000,
+      });
+
+      clientRef.current.activate();
+      return;
+    }
+
+    if (isConnected) {
+      const subscriptions = topics.map((topic) =>
+        clientRef.current?.subscribe(topic, (message) => {
+          dispatch(messageReceived({ topic, body: message.body }));
+        })
+      );
+
+      return () => {
+        subscriptions.forEach((subscription) => {
+          console.log(subscription);
+          subscription?.unsubscribe();
         });
-      },
-    });
-
-    newClient.activate();
-
-    setClient(newClient);
-
-    // This function will be called when StompProvider is unmounted
-    return () => {
-      newClient.deactivate();
-    };
-  }, []); // Empty dependency array ensures this runs once on mount and not on updates
+      };
+    }
+  }, [data?.chatRooms.length]);
 
   return (
-    <StompContext.Provider value={{ client }}>{children}</StompContext.Provider>
+    <StompContext.Provider value={{ client: clientRef.current }}>
+      {children}
+    </StompContext.Provider>
   );
 };
