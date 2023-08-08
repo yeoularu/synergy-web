@@ -19,6 +19,16 @@ export const StompProvider = ({ children }: { children: JSX.Element }) => {
 
   const clientRef = useRef<Client | null>(null);
   const isConnected = clientRef.current?.connected;
+  const makeSubscriptions = () =>
+    topics.map((topic) =>
+      clientRef.current?.subscribe(
+        topic,
+        (message) => {
+          dispatch(messageReceived({ topic, body: message.body }));
+        },
+        { id: topic }
+      )
+    );
 
   useEffect(() => {
     if (!clientRef.current) {
@@ -36,12 +46,18 @@ export const StompProvider = ({ children }: { children: JSX.Element }) => {
       return;
     }
 
+    if (!isConnected) {
+      clientRef.current.onConnect = makeSubscriptions;
+
+      return () => {
+        topics.forEach((topic) => {
+          clientRef.current?.unsubscribe(topic);
+        });
+      };
+    }
+
     if (isConnected) {
-      const subscriptions = topics.map((topic) =>
-        clientRef.current?.subscribe(topic, (message) => {
-          dispatch(messageReceived({ topic, body: message.body }));
-        })
-      );
+      const subscriptions = makeSubscriptions();
 
       return () => {
         subscriptions.forEach((subscription) => {
