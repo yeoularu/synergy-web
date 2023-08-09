@@ -23,12 +23,6 @@ interface User {
   image: string;
 }
 
-interface MyInfo extends User {
-  likedPosts: number[];
-  likedProjects: number[];
-  chatRooms: ChatRoom[];
-}
-
 interface ChatRoom {
   roomId: number;
   participantIds: number[];
@@ -44,4 +38,4 @@ interface ChatMessage {
   sendTime: string;
 }
 
-export type { Post, Project, User, MyInfo, ChatMessage, ChatRoom };
+export type { Post, Project, User, ChatMessage, ChatRoom };

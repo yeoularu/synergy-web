@@ -16,7 +16,7 @@ const useStyles = createStyles((theme) => ({
 export default function PostLike({ id, likes }: { id: number; likes: number }) {
   const { classes } = useStyles();
 
-  const isLiked = api.useGetMyInfoQuery(null).data?.likedPosts.includes(id);
+  const isLiked = api.useGetMyLikedPostsQuery(null).data?.includes(id);
 
   const setToggleLike = api.useLikePostMutation()[0];
 
