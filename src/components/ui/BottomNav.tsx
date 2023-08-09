@@ -1,4 +1,5 @@
 import { createStyles, Group, rem } from "@mantine/core";
+import { ChatInput } from "components/chat/ChatInput";
 import { Link, useLocation } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
