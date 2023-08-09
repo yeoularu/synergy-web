@@ -8,7 +8,6 @@ export const api = createApi({
   tagTypes: [
     "Post",
     "Project",
-    "MyId",
     "LikedPostId",
     "LikedProjectId",
     "ChatRoom",
@@ -35,7 +34,6 @@ export const api = createApi({
     // MyInfo
     getMyId: build.query<number, null>({
       query: () => "/me/id",
-      providesTags: [{ type: "MyId", id: "LIST" }],
     }),
 
     getMyLikedPosts: build.query<number[], null>({
