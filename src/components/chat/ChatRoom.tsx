@@ -15,16 +15,15 @@ export default function ChatRoom() {
   if (!id) {
     redirect("/chat");
   }
-  const { data, isSuccess, isError, error } = api.useGetMyInfoQuery(null);
+  const { data: myId } = api.useGetMyIdQuery(null);
+  const { data, isSuccess, isError, error } = api.useGetMyChatRoomsQuery(null);
 
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
   const [oldMessages, setOldMessages] = useState<ChatMessage[]>([]);
   useEffect(() => {
     if (isSuccess) {
-      const chatRoom = data.chatRooms.find(
-        (chatRoom) => chatRoom.roomId === Number(id)
-      );
+      const chatRoom = data.find((chatRoom) => chatRoom.roomId === Number(id));
       if (chatRoom) {
         setOldMessages([...chatRoom.messages]);
       }
@@ -49,7 +48,7 @@ export default function ChatRoom() {
   const content = allMessages.reduce((acc, cur, i) => {
     const next = allMessages[i + 1];
     const { text, senderId, sendTime } = cur;
-    const fromMe = senderId === data?.id;
+    const fromMe = senderId === myId;
 
     const isLast =
       !next ||

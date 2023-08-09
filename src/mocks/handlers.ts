@@ -193,6 +193,20 @@ export const handlers = [
     return res(ctx.status(200), ctx.json(user));
   }),
 
+  rest.get("/me/id", (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json(user.id));
+  }),
+
+  rest.get("/me/like/post", (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json(user.likedPosts));
+  }),
+  rest.get("/me/like/project", (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json(user.likedProjects));
+  }),
+  rest.get("/me/chatrooms", (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json(user.chatRooms));
+  }),
+
   rest.get("/members/:id", (req, res, ctx) => {
     const { id } = req.params as { id: string };
     const user = users.find((user) => user.id === Number(id));

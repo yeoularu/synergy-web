@@ -22,7 +22,7 @@ export default function ProjectLike({
 }) {
   const { classes } = useStyles();
 
-  const isLiked = api.useGetMyInfoQuery(null).data?.likedProjects.includes(id);
+  const isLiked = api.useGetMyLikedProjectsQuery(null).data?.includes(id);
 
   const setToggleLike = api.useLikeProjectMutation()[0];
 

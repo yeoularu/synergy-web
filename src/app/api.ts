@@ -1,11 +1,18 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Post, Project, MyInfo, User } from "types";
+import { Post, Project, User, ChatRoom } from "types";
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_URL,
   }),
-  tagTypes: ["Post", "Project", "MyInfo", "User"],
+  tagTypes: [
+    "Post",
+    "Project",
+    "LikedPostId",
+    "LikedProjectId",
+    "ChatRoom",
+    "User",
+  ],
   endpoints: (build) => ({
     // Auth
     register: build.mutation<void, { email: string; password: string }>({
@@ -25,9 +32,32 @@ export const api = createApi({
     }),
 
     // MyInfo
-    getMyInfo: build.query<MyInfo, null>({
-      query: () => "/members/me",
-      providesTags: [{ type: "MyInfo", id: "LIST" }],
+    getMyId: build.query<number, null>({
+      query: () => "/me/id",
+    }),
+
+    getMyLikedPosts: build.query<number[], null>({
+      query: () => "/me/like/post",
+      providesTags: [{ type: "LikedPostId", id: "LIST" }],
+    }),
+
+    getMyLikedProjects: build.query<number[], null>({
+      query: () => "/me/like/project",
+      providesTags: [{ type: "LikedProjectId", id: "LIST" }],
+    }),
+
+    getMyChatRooms: build.query<ChatRoom[], null>({
+      query: () => "/me/chatrooms",
+      providesTags: (result, error, arg) =>
+        result
+          ? [
+              ...result.map(({ roomId }) => ({
+                type: "ChatRoom" as const,
+                id: String(roomId),
+              })),
+              { type: "ChatRoom", id: "LIST" },
+            ]
+          : [{ type: "ChatRoom", id: "LIST" }],
     }),
 
     likePost: build.mutation<void, number>({
@@ -37,7 +67,7 @@ export const api = createApi({
       }),
       invalidatesTags: (result, error, arg) => [
         { type: "Post", id: String(arg) },
-        { type: "MyInfo", id: "LIST" },
+        { type: "LikedPostId", id: "LIST" },
       ],
     }),
 
@@ -48,7 +78,7 @@ export const api = createApi({
       }),
       invalidatesTags: (result, error, arg) => [
         { type: "Project", id: String(arg) },
-        { type: "MyInfo", id: "LIST" },
+        { type: "LikedProjectId", id: "LIST" },
       ],
     }),
 
@@ -57,7 +87,9 @@ export const api = createApi({
         url: `/chat/create/${userId}`,
         method: "PUT",
       }),
-      invalidatesTags: (result, error, arg) => [{ type: "MyInfo", id: "LIST" }],
+      invalidatesTags: (result, error, arg) => [
+        { type: "ChatRoom", id: "LIST" },
+      ],
     }),
 
     // Users
@@ -67,6 +99,18 @@ export const api = createApi({
     }),
 
     // Post
+    createPost: build.mutation<void, { title: string; content: string }>({
+      query: (post) => ({
+        url: "/post/create",
+        method: "POST",
+        body: {
+          subject: post.title,
+          content: post.content,
+        },
+      }),
+      invalidatesTags: [{ type: "Post", id: "LIST" }],
+    }),
+
     getAllPosts: build.query<{ data: Post[] }, null>({
       query: () => "/post/postAll",
       providesTags: (result, error, arg) =>
@@ -86,18 +130,6 @@ export const api = createApi({
       providesTags: (result, error, arg) => [{ type: "Post", id: String(arg) }],
     }),
 
-    createPost: build.mutation<void, { title: string; content: string }>({
-      query: (post) => ({
-        url: "/post/create",
-        method: "POST",
-        body: {
-          subject: post.title,
-          content: post.content,
-        },
-      }),
-      invalidatesTags: [{ type: "Post", id: "LIST" }],
-    }),
-
     deletePost: build.mutation<void, { id: number }>({
       query: ({ id }) => ({
         url: `/post/delete/${id}`,
@@ -109,6 +141,15 @@ export const api = createApi({
     }),
 
     // Project
+    createProject: build.mutation<number, Omit<Project, "id" | "likes">>({
+      query: (project) => ({
+        url: "/project/create",
+        method: "POST",
+        body: project,
+      }),
+      invalidatesTags: [{ type: "Project", id: "LIST" }],
+    }),
+
     getAllProjects: build.query<{ data: Project[] }, null>({
       query: () => "/project/projectAll",
       providesTags: (result, error, arg) =>
@@ -121,15 +162,6 @@ export const api = createApi({
               { type: "Project", id: "LIST" },
             ]
           : [{ type: "Project", id: "LIST" }],
-    }),
-
-    createProject: build.mutation<number, Omit<Project, "id" | "likes">>({
-      query: (project) => ({
-        url: "/project/create",
-        method: "POST",
-        body: project,
-      }),
-      invalidatesTags: [{ type: "Project", id: "LIST" }],
     }),
 
     getProject: build.query<{ data: Project }, { id: number }>({

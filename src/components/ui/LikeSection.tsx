@@ -24,8 +24,8 @@ export default function LikeSection({ id, likes, isPost }: LikeSectionProps) {
   const { classes } = useStyles();
 
   const isLiked = isPost
-    ? api.useGetMyInfoQuery(null).data?.likedPosts.includes(id)
-    : api.useGetMyInfoQuery(null).data?.likedProjects.includes(id);
+    ? api.useGetMyLikedPostsQuery(null).data?.includes(id)
+    : api.useGetMyLikedProjectsQuery(null).data?.includes(id);
 
   const setToggleLike = isPost
     ? api.useLikePostMutation()[0]
