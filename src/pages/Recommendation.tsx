@@ -1,5 +1,4 @@
 import { Button, Group, Stack } from "@mantine/core";
-import { api } from "app/api";
 import { Link } from "react-router-dom";
 import PostList from "components/post/PostList";
 import ProjectList from "components/project/ProjectList";
