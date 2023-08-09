@@ -13,9 +13,9 @@ export const StompContext = createContext<StompContextProps>({ client: null });
 export const StompProvider = ({ children }: { children: JSX.Element }) => {
   const dispatch = useDispatch();
   const brokerURL = import.meta.env.VITE_WEBSOCKET_URL;
-  const { data } = api.useGetMyInfoQuery(null);
+  const { data: chatRooms } = api.useGetMyChatRoomsQuery(null);
 
-  const topics = data?.chatRooms.map(({ roomId }) => `/topic/${roomId}`) || [];
+  const topics = chatRooms?.map(({ roomId }) => `/topic/${roomId}`) || [];
 
   const clientRef = useRef<Client | null>(null);
   const isConnected = clientRef.current?.connected;
@@ -66,7 +66,7 @@ export const StompProvider = ({ children }: { children: JSX.Element }) => {
         });
       };
     }
-  }, [data?.chatRooms.length]);
+  }, [chatRooms?.length]);
 
   return (
     <StompContext.Provider value={{ client: clientRef.current }}>
