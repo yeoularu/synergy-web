@@ -98,6 +98,20 @@ export const api = createApi({
       providesTags: (result, error, arg) => [{ type: "User", id: String(arg) }],
     }),
 
+    getUsers: build.query<User[], number[]>({
+      query: (ids) => `/members?ids=${ids.join(",")}`,
+      providesTags: (result, error, arg) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "User" as const,
+                id: String(id),
+              })),
+              { type: "User", id: "LIST" },
+            ]
+          : [{ type: "User", id: "LIST" }],
+    }),
+
     // Post
     createPost: build.mutation<void, { title: string; content: string }>({
       query: (post) => ({

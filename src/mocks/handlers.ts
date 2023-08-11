@@ -214,6 +214,13 @@ export const handlers = [
     return res(ctx.status(200), ctx.json(user));
   }),
 
+  rest.get("/members?ids=:ids", (req, res, ctx) => {
+    const { ids } = req.params as { ids: string };
+    const idList = ids.split(",").map((id) => Number(id));
+    const userList = users.filter((user) => idList.includes(user.id));
+    return res(ctx.status(200), ctx.json(userList));
+  }),
+
   rest.put("/chat/create/:id", (req, res, ctx) => {
     const { id } = req.params as { id: string };
     if (!id || !users.find((user) => user.id === Number(id)))
