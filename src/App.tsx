@@ -1,15 +1,5 @@
 import { MantineProvider } from "@mantine/core";
 import {
-  People,
-  Chat,
-  Notification,
-  Auth,
-  NewPost,
-  NewProject,
-  ProjectDetail,
-  Recommendation,
-} from "pages";
-import {
   BrowserRouter,
   Navigate,
   Outlet,
@@ -18,6 +8,15 @@ import {
 } from "react-router-dom";
 import Layout from "components/ui/Layout";
 import ChatRoom from "components/chat/ChatRoom";
+import Profile from "pages/Profile";
+import Auth from "pages/Auth";
+import Chat from "pages/Chat";
+import NewPost from "pages/NewPost";
+import NewProject from "pages/NewProject";
+import People from "pages/People";
+import ProjectDetail from "pages/ProjectDetail";
+import Recommendation from "pages/Recommendation";
+import Notification from "pages/Notification";
 
 const PrivateRoutes = () => {
   const auth = sessionStorage.getItem("logged-in");
@@ -40,6 +39,9 @@ export default function App() {
               <Route path="notification" element={<Notification />} />
               <Route path="project">
                 <Route path=":id" element={<ProjectDetail />} />
+              </Route>
+              <Route path="profile">
+                <Route path=":id" element={<Profile />} />
               </Route>
               <Route path="new/post" element={<NewPost />} />
               <Route path="new/project" element={<NewProject />} />

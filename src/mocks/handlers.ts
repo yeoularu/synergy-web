@@ -126,31 +126,55 @@ const chatRooms = [
 
 const users = [
   {
+    id: 0,
+    name: "yeoularu",
+    backgroundImage: "https://source.unsplash.com/random",
+    avatar: "https://avatars.githubusercontent.com/u/48755175?v=4",
+    email: "yeoularu@gmail.com",
+    temperature: 36.8,
+    major: "전기정보공학과",
+  },
+  {
     id: 1,
-    image:
+    backgroundImage: "https://source.unsplash.com/random",
+    avatar:
       "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80",
     name: "시너지유저1",
     email: "hspoonlicker@outlook.com",
+    temperature: 36.5,
+    major: "기계자동차공학과",
   },
   {
     id: 2,
-    image: "https://avatars.githubusercontent.com/u/109144975?v=4",
+    backgroundImage: "https://source.unsplash.com/random",
+    avatar: "https://avatars.githubusercontent.com/u/109144975?v=4",
     name: "이종훈",
     email: "dfjidjfi@gmail.com",
+    temperature: 100,
+    major: "컴퓨터공학과",
   },
   {
     id: 3,
-    image: "https://avatars.githubusercontent.com/u/69510981?v=4",
+    backgroundImage: "https://source.unsplash.com/random",
+    avatar: "https://avatars.githubusercontent.com/u/69510981?v=4",
     name: "삼삼삼",
     email: "3333333333@gmail.com",
+    temperature: 20.0,
+    major: "안경광학과, 전자IT미디어공학과",
+  },
+  {
+    id: 4,
+    backgroundImage: "https://source.unsplash.com/random",
+    avatar: "https://avatars.githubusercontent.com/u/69510444?v=4",
+    name: "사사사사",
+    email: "4444@gmail.com",
+    temperature: 44.4,
+    major: "안경광학과, 전자IT미디어공학과",
   },
 ];
 
 const user = {
-  id: 0,
-  name: "yeoularu",
-  image: "https://avatars.githubusercontent.com/u/48755175?v=4",
-  email: "yeoularu@gmail.com",
+  ...users[0],
   likedPosts: [1, 2],
   likedProjects: [0],
   chatRooms: chatRooms,

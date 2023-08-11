@@ -20,7 +20,10 @@ interface User {
   id: number;
   name: string;
   email: string;
-  image: string;
+  avatar: string;
+  backgroundImage: string;
+  major: string;
+  temperature: number;
 }
 
 interface ChatRoom {
