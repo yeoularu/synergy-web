@@ -10,6 +10,8 @@ export const api = createApi({
     "Project",
     "LikedPostId",
     "LikedProjectId",
+    "FollowingId",
+    "FollowerId",
     "ChatRoom",
     "User",
   ],
@@ -46,6 +48,16 @@ export const api = createApi({
       providesTags: [{ type: "LikedProjectId", id: "LIST" }],
     }),
 
+    getMyFollowing: build.query<number[], null>({
+      query: () => "/me/following",
+      providesTags: [{ type: "FollowingId", id: "LIST" }],
+    }),
+
+    getMyFollowers: build.query<number[], null>({
+      query: () => "/me/follower",
+      providesTags: [{ type: "FollowerId", id: "LIST" }],
+    }),
+
     getMyChatRooms: build.query<ChatRoom[], null>({
       query: () => "/me/chatrooms",
       providesTags: (result, error, arg) =>
@@ -79,6 +91,17 @@ export const api = createApi({
       invalidatesTags: (result, error, arg) => [
         { type: "Project", id: String(arg) },
         { type: "LikedProjectId", id: "LIST" },
+      ],
+    }),
+
+    follow: build.mutation<void, number>({
+      query: (id) => ({
+        url: `/members/follow/${id}`,
+        method: "PUT",
+      }),
+      invalidatesTags: (result, error, arg) => [
+        { type: "User", id: String(arg) },
+        { type: "FollowingId", id: "LIST" },
       ],
     }),
 

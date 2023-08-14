@@ -11,6 +11,7 @@ import {
 } from "@mantine/core";
 import { api } from "app/api";
 import PostLikeSection from "./PostLike";
+import { Link } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -58,7 +59,9 @@ export default function PostCard({ id }: { id: number }) {
       <Card.Section className={classes.section}>
         <Group position="apart">
           <Group>
-            <Avatar radius="xl" />
+            <Link to={`/people/${post.authorId}`}>
+              <Avatar src={post.authorAvatar} radius="xl" />
+            </Link>
             <Text>{post.author}</Text>
           </Group>
 

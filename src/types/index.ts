@@ -3,6 +3,8 @@ interface Post {
   title: string;
   content: string;
   author: string;
+  authorId: number;
+  authorAvatar: string;
   likes: number;
 }
 

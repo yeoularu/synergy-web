@@ -3,11 +3,11 @@ import {
   Card,
   Avatar,
   Text,
-  Group,
   Button,
   rem,
   Progress,
 } from "@mantine/core";
+import { api } from "app/api";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -23,6 +23,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface UserCardImageProps {
+  id: number;
   backgroundImage: string;
   avatar: string;
   name: string;
@@ -31,6 +32,7 @@ interface UserCardImageProps {
 }
 
 export function UserCard({
+  id,
   backgroundImage,
   avatar,
   name,
@@ -38,12 +40,18 @@ export function UserCard({
   temperature,
 }: UserCardImageProps) {
   const { classes, theme } = useStyles();
+  const { data: myId } = api.useGetMyIdQuery(null);
+  const { data: myFollowing } = api.useGetMyFollowingQuery(null);
+  const isFollowing = myFollowing?.includes(id);
+
+  const follow = api.useFollowMutation()[0];
 
   return (
     <Card withBorder padding="xl" radius="md" className={classes.card}>
       <Card.Section
         sx={{ backgroundImage: `url(${backgroundImage})`, height: 140 }}
       />
+
       <Avatar
         src={avatar}
         size={80}
@@ -65,15 +73,28 @@ export function UserCard({
 
       <Progress value={temperature} label={`${temperature}°C`} size="xl" />
 
-      <Button
-        fullWidth
-        radius="md"
-        mt="xl"
-        size="md"
-        color={theme.colorScheme === "dark" ? undefined : "dark"}
-      >
-        Follow
-      </Button>
+      {myId !== id ? (
+        <Button
+          fullWidth
+          radius="md"
+          mt="xl"
+          size="md"
+          color={
+            isFollowing
+              ? "gray"
+              : theme.colorScheme === "dark"
+              ? undefined
+              : "dark"
+          }
+          onClick={() => follow(id)}
+        >
+          {isFollowing ? "팔로우 취소" : "팔로우"}
+        </Button>
+      ) : (
+        <Button fullWidth radius="md" mt="xl" size="md">
+          프로필 설정
+        </Button>
+      )}
     </Card>
   );
 }

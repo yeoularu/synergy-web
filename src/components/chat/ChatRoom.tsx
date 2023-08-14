@@ -6,7 +6,7 @@ import { redirect, useParams } from "react-router-dom";
 import { api } from "app/api";
 import ChatMessageCard from "./ChatMessageCard";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChatMessage } from "types";
+import { ChatMessage, ChatRoom } from "types";
 import dayjs from "dayjs";
 import { ChatHeader } from "./ChatHeader";
 
@@ -23,7 +23,9 @@ export default function ChatRoom() {
   const [oldMessages, setOldMessages] = useState<ChatMessage[]>([]);
   useEffect(() => {
     if (isSuccess) {
-      const chatRoom = data.find((chatRoom) => chatRoom.roomId === Number(id));
+      const chatRoom = data.find(
+        (chatRoom: ChatRoom) => chatRoom.roomId === Number(id)
+      );
       if (chatRoom) {
         setOldMessages([...chatRoom.messages]);
       }
@@ -39,7 +41,7 @@ export default function ChatRoom() {
     });
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView();
   };
 
   useEffect(scrollToBottom, [newMessages]);

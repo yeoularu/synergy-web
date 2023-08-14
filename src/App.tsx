@@ -31,7 +31,11 @@ export default function App() {
           <Route element={<PrivateRoutes />}>
             <Route path="/" element={<Layout />}>
               <Route index element={<Recommendation />} />
-              <Route path="people" element={<People />} />
+              <Route path="people">
+                <Route index element={<People />} />
+
+                <Route path=":id" element={<Profile />} />
+              </Route>
               <Route path="chat">
                 <Route index element={<Chat />} />
                 <Route path=":id" element={<ChatRoom />} />
@@ -40,9 +44,7 @@ export default function App() {
               <Route path="project">
                 <Route path=":id" element={<ProjectDetail />} />
               </Route>
-              <Route path="profile">
-                <Route path=":id" element={<Profile />} />
-              </Route>
+
               <Route path="new/post" element={<NewPost />} />
               <Route path="new/project" element={<NewProject />} />
             </Route>

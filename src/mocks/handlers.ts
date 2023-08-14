@@ -1,36 +1,93 @@
 // src/mocks/handlers.js
 import { rest } from "msw";
 
+const users = [
+  {
+    id: 0,
+    name: "yeoularu",
+    backgroundImage: "https://source.unsplash.com/random",
+    avatar: "https://avatars.githubusercontent.com/u/48755175?v=4",
+    email: "yeoularu@gmail.com",
+    temperature: 36.8,
+    major: "전기정보공학과",
+  },
+  {
+    id: 1,
+    backgroundImage: "https://source.unsplash.com/random",
+    avatar:
+      "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80",
+    name: "시너지유저1",
+    email: "hspoonlicker@outlook.com",
+    temperature: 36.5,
+    major: "기계자동차공학과",
+  },
+  {
+    id: 2,
+    backgroundImage: "https://source.unsplash.com/random",
+    avatar: "https://avatars.githubusercontent.com/u/109144975?v=4",
+    name: "이종훈",
+    email: "dfjidjfi@gmail.com",
+    temperature: 100,
+    major: "컴퓨터공학과",
+  },
+  {
+    id: 3,
+    backgroundImage: "https://source.unsplash.com/random",
+    avatar: "https://avatars.githubusercontent.com/u/69510981?v=4",
+    name: "삼삼삼",
+    email: "3333333333@gmail.com",
+    temperature: 20.0,
+    major: "안경광학과, 전자IT미디어공학과",
+  },
+  {
+    id: 4,
+    backgroundImage: "https://source.unsplash.com/random",
+    avatar: "https://avatars.githubusercontent.com/u/69510444?v=4",
+    name: "사사사사",
+    email: "4444@gmail.com",
+    temperature: 44.4,
+    major: "안경광학과, 전자IT미디어공학과",
+  },
+];
+
 const posts = [
   {
     id: 0,
     title: "First post",
     content: "Hello!",
-    author: "Yihua",
+    authorId: 0,
+
     likes: 0,
   },
   {
     id: 1,
     title: "Second post",
     content: "Hello!",
-    author: "Yihua",
+    authorId: 1,
+
     likes: 1,
   },
   {
     id: 2,
     title: "",
     content: "Third post with no title",
-    author: "Yihua",
+
+    authorId: 2,
+
     likes: 33,
   },
   {
     id: 3,
     title: "4 post",
     content: "4!",
-    author: "12345",
+    authorId: 3,
     likes: 0,
   },
-];
+].map((post) => ({
+  ...post,
+  author: users.find(({ id }) => id === post.authorId)?.name,
+  authorAvatar: users.find(({ id }) => id === post.authorId)?.avatar,
+}));
 
 const projects = [
   {
@@ -124,59 +181,12 @@ const chatRooms = [
   },
 ];
 
-const users = [
-  {
-    id: 0,
-    name: "yeoularu",
-    backgroundImage: "https://source.unsplash.com/random",
-    avatar: "https://avatars.githubusercontent.com/u/48755175?v=4",
-    email: "yeoularu@gmail.com",
-    temperature: 36.8,
-    major: "전기정보공학과",
-  },
-  {
-    id: 1,
-    backgroundImage: "https://source.unsplash.com/random",
-    avatar:
-      "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80",
-    name: "시너지유저1",
-    email: "hspoonlicker@outlook.com",
-    temperature: 36.5,
-    major: "기계자동차공학과",
-  },
-  {
-    id: 2,
-    backgroundImage: "https://source.unsplash.com/random",
-    avatar: "https://avatars.githubusercontent.com/u/109144975?v=4",
-    name: "이종훈",
-    email: "dfjidjfi@gmail.com",
-    temperature: 100,
-    major: "컴퓨터공학과",
-  },
-  {
-    id: 3,
-    backgroundImage: "https://source.unsplash.com/random",
-    avatar: "https://avatars.githubusercontent.com/u/69510981?v=4",
-    name: "삼삼삼",
-    email: "3333333333@gmail.com",
-    temperature: 20.0,
-    major: "안경광학과, 전자IT미디어공학과",
-  },
-  {
-    id: 4,
-    backgroundImage: "https://source.unsplash.com/random",
-    avatar: "https://avatars.githubusercontent.com/u/69510444?v=4",
-    name: "사사사사",
-    email: "4444@gmail.com",
-    temperature: 44.4,
-    major: "안경광학과, 전자IT미디어공학과",
-  },
-];
-
 const user = {
   ...users[0],
   likedPosts: [1, 2],
   likedProjects: [0],
+  following: [2, 3],
+  followers: [1],
   chatRooms: chatRooms,
 };
 
@@ -227,6 +237,12 @@ export const handlers = [
   rest.get("/me/like/project", (_, res, ctx) => {
     return res(ctx.status(200), ctx.json(user.likedProjects));
   }),
+  rest.get("/me/following", (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json(user.following));
+  }),
+  rest.get("/me/followers", (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json(user.followers));
+  }),
   rest.get("/me/chatrooms", (_, res, ctx) => {
     return res(ctx.status(200), ctx.json(user.chatRooms));
   }),
@@ -243,6 +259,19 @@ export const handlers = [
     const idList = ids.split(",").map((id) => Number(id));
     const userList = users.filter((user) => idList.includes(user.id));
     return res(ctx.status(200), ctx.json(userList));
+  }),
+
+  rest.put("/members/follow/:id", (req, res, ctx) => {
+    const { id } = req.params as { id: string };
+    if (!id || !users.find((user) => user.id === Number(id)))
+      return res(ctx.status(400));
+    if (user.following.includes(Number(id))) {
+      user.following = user.following.filter((userId) => userId !== Number(id));
+    } else {
+      user.following.push(Number(id));
+    }
+
+    return res(ctx.status(200));
   }),
 
   rest.put("/chat/create/:id", (req, res, ctx) => {
@@ -267,8 +296,10 @@ export const handlers = [
       id: posts.at(-1)?.id ? posts.at(-1)!.id + 1 : 0,
       title: subject,
       content,
-      author: "new user",
+      authorId: user.id,
       likes: 0,
+      author: user.name,
+      authorAvatar: user.avatar,
     });
     console.log(posts);
     return res(ctx.status(200));
