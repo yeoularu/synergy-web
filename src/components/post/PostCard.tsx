@@ -10,8 +10,9 @@ import {
   rem,
 } from "@mantine/core";
 import { api } from "app/api";
-import PostLikeSection from "./PostLike";
 import { Link } from "react-router-dom";
+import { Post } from "types";
+import PostLike from "./PostLike";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -34,19 +35,13 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default function PostCard({ id }: { id: number }) {
+export default function PostCard({ post }: { post: Post }) {
   const { classes } = useStyles();
-  const { post } = api.useGetAllPostsQuery(null, {
-    selectFromResult: ({ data }) => ({
-      post: data?.data.find((post) => post.id === id),
-    }),
-  });
-
   const setDeletePost = api.useDeletePostMutation()[0];
 
   const handleDelete = async () => {
     try {
-      await setDeletePost({ id }).unwrap();
+      await setDeletePost(post.id).unwrap();
     } catch (e) {
       console.error(e);
     }
@@ -95,7 +90,7 @@ export default function PostCard({ id }: { id: number }) {
       </Card.Section>
 
       <Card.Section className={classes.section}>
-        <PostLikeSection {...{ id, likes: post.likes }} />
+        <PostLike {...post} />
       </Card.Section>
     </Card>
   );

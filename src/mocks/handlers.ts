@@ -309,6 +309,28 @@ export const handlers = [
     return res(ctx.status(200), ctx.json({ data: posts }));
   }),
 
+  rest.get("/post/recent", (req, res, ctx) => {
+    const page = req.url.searchParams.get("page");
+    console.log(page);
+    return res(
+      ctx.status(200),
+      ctx.json({
+        data: [
+          {
+            id: 999,
+            title: "this is front of page" + page,
+            content: page,
+            authorId: 999,
+            author: "page master",
+            authorAvatar: "",
+            likes: 0,
+          },
+          ...posts,
+        ],
+      })
+    );
+  }),
+
   rest.delete("/post/delete/:id", (req, res, ctx) => {
     const { id } = req.params as { id: string };
     const index = posts.findIndex((post) => post.id === parseInt(id));
@@ -339,7 +361,10 @@ export const handlers = [
       posts.find((post) => post.id === parseInt(id))!.likes++;
     }
 
-    return res(ctx.status(200));
+    return res(
+      ctx.status(200),
+      ctx.json({ data: posts.find((post) => post.id === parseInt(id)) })
+    );
   }),
 
   // Project
@@ -362,8 +387,26 @@ export const handlers = [
     return res(ctx.status(200), ctx.json(id));
   }),
 
-  rest.get("/project/projectAll", (_, res, ctx) => {
-    return res(ctx.status(200), ctx.json({ data: projects }));
+  rest.get("/project/recent", (req, res, ctx) => {
+    const page = req.url.searchParams.get("page");
+    console.log(page);
+    return res(
+      ctx.status(200),
+      ctx.json({
+        data: [
+          {
+            id: 1000 + Number(page),
+            name: "프로젝트 page" + page,
+            content: "Hello!",
+            field: ["AI", "IT서비스"],
+            createDate: "2023-09-01",
+            endDate: "2023-09-30",
+            likes: 0,
+          },
+          ...projects,
+        ],
+      })
+    );
   }),
 
   rest.get("/project/:id", (req, res, ctx) => {

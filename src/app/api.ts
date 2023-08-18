@@ -77,6 +77,7 @@ export const api = createApi({
         url: `/post/like/${id}`,
         method: "PUT",
       }),
+
       invalidatesTags: (result, error, arg) => [
         { type: "Post", id: String(arg) },
         { type: "LikedPostId", id: "LIST" },
@@ -88,6 +89,7 @@ export const api = createApi({
         url: `/project/like/${id}`,
         method: "PUT",
       }),
+
       invalidatesTags: (result, error, arg) => [
         { type: "Project", id: String(arg) },
         { type: "LikedProjectId", id: "LIST" },
@@ -148,32 +150,31 @@ export const api = createApi({
       invalidatesTags: [{ type: "Post", id: "LIST" }],
     }),
 
-    getAllPosts: build.query<{ data: Post[] }, null>({
-      query: () => "/post/postAll",
-      providesTags: (result, error, arg) =>
-        result
-          ? [
-              ...result.data.map(({ id }) => ({
-                type: "Post" as const,
-                id: String(id),
-              })),
-              { type: "Post", id: "LIST" },
-            ]
-          : [{ type: "Post", id: "LIST" }],
-    }),
-
     getPost: build.query<{ data: Post }, number>({
       query: (id) => `/post/${id}`,
       providesTags: (result, error, arg) => [{ type: "Post", id: String(arg) }],
     }),
 
-    deletePost: build.mutation<void, { id: number }>({
-      query: ({ id }) => ({
+    getRecentPosts: build.query<{ data: Post[] }, number>({
+      query: (page) => `/post/recent?page=${page}`,
+      serializeQueryArgs: ({ endpointName }) => {
+        return endpointName;
+      },
+      merge: (currentCache, newItems) => {
+        currentCache.data.push(...newItems.data);
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg !== previousArg;
+      },
+    }),
+
+    deletePost: build.mutation<void, number>({
+      query: (id) => ({
         url: `/post/delete/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: (result, error, arg) => [
-        { type: "Post", id: String(arg.id) },
+        { type: "Post", id: String(arg) },
       ],
     }),
 
@@ -186,27 +187,25 @@ export const api = createApi({
       }),
       invalidatesTags: [{ type: "Project", id: "LIST" }],
     }),
-
-    getAllProjects: build.query<{ data: Project[] }, null>({
-      query: () => "/project/projectAll",
-      providesTags: (result, error, arg) =>
-        result
-          ? [
-              ...result.data.map(({ id }) => ({
-                type: "Project" as const,
-                id: String(id),
-              })),
-              { type: "Project", id: "LIST" },
-            ]
-          : [{ type: "Project", id: "LIST" }],
-    }),
-
     getProject: build.query<{ data: Project }, { id: number }>({
       query: ({ id }) => `/project/search/${id}`,
       providesTags: (result) =>
         result
           ? [{ type: "Project", id: String(result.data.id) }]
           : [{ type: "Project", id: "LIST" }],
+    }),
+
+    getRecentProjects: build.query<{ data: Project[] }, number>({
+      query: (page) => `/project/recent?page=${page}`,
+      serializeQueryArgs: ({ endpointName }) => {
+        return endpointName;
+      },
+      merge: (currentCache, newItems) => {
+        currentCache.data.push(...newItems.data);
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg !== previousArg;
+      },
     }),
 
     deleteProject: build.mutation<void, { id: number }>({
