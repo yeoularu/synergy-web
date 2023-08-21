@@ -521,7 +521,7 @@ export const handlers = [
     return res(ctx.status(200), ctx.json(result));
   }),
 
-  rest.get("/search/user", (req, res, ctx) => {
+  rest.get("/search/user", async (req, res, ctx) => {
     const keyword = req.url.searchParams.get("keyword");
     const page = req.url.searchParams.get("page");
 
@@ -543,6 +543,7 @@ export const handlers = [
       totalElements: 100,
       totalPages: 10,
     };
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     return res(ctx.status(200), ctx.json(result));
   }),
 ];

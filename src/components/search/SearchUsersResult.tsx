@@ -38,7 +38,7 @@ export default function SearchUsersResult() {
     <>
       <Stack w="100%">
         <Text size="sm" mt="sm">
-          {query} 게시글 검색 결과 {data?.totalElements}건
+          {query} 사람 검색 결과 {data?.totalElements}건
         </Text>
         {content}
       </Stack>

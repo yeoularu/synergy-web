@@ -34,7 +34,11 @@ export function ContentCategory() {
   return (
     <>
       {data.map((item, index) => (
-        <Link to={item.path} key={item.label}>
+        <Link
+          to={item.path}
+          key={item.label}
+          style={{ color: "inherit", textDecoration: "inherit" }}
+        >
           <NavLink
             active={index === active}
             label={item.label}

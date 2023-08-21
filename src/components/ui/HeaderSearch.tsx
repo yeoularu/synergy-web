@@ -88,10 +88,15 @@ export function HeaderSearch({ links, children }: HeaderSearchProps) {
     <Header height={56} className={classes.header}>
       <div className={classes.inner}>
         {children}
-        <Group>
-          <Logo width={28} />
-          <Title size={"h3"}>Synergy</Title>
-        </Group>
+        <Link
+          to="/home"
+          style={{ color: "inherit", textDecoration: "inherit" }}
+        >
+          <Group>
+            <Logo width={28} />
+            <Title size={"h3"}>Synergy</Title>
+          </Group>
+        </Link>
 
         <Group>
           <ActionIcon onClick={open} disabled={isSearchPage}>

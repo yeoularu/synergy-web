@@ -1,4 +1,4 @@
-import { Avatar, Text, Button, Paper, Skeleton } from "@mantine/core";
+import { Avatar, Text, Button, Paper, Skeleton, Stack } from "@mantine/core";
 
 export default function UserSkeleton() {
   return (
@@ -11,10 +11,12 @@ export default function UserSkeleton() {
           theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.white,
       })}
     >
-      <Skeleton height={50} circle mb="xl" />
-      <Skeleton height={8} radius="xl" />
-      <Skeleton height={8} mt={6} radius="xl" />
-      <Skeleton height={8} mt={6} width="70%" radius="xl" />
+      <Stack align="center">
+        <Skeleton height={120} circle mb="xl" />
+        <Skeleton height={12} w="30%" radius="xl" />
+        <Skeleton height={8} w="70%" radius="xl" />
+        <Skeleton height={32} mt={6} radius="xs" />
+      </Stack>
     </Paper>
   );
 }
