@@ -40,7 +40,7 @@ export default function SearchProjectsResult() {
     <>
       <Stack w="100%">
         <Text size="sm" mt="sm">
-          {query} 게시글 검색 결과 {data?.totalElements}건
+          {query} 프로젝트 검색 결과 {data?.totalElements}건
         </Text>
         {content}
       </Stack>

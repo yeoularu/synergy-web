@@ -16,13 +16,13 @@ const data = [
   },
   {
     icon: IconGauge,
-    label: "전체 글",
+    label: "최신 글",
     rightSection: <IconChevronRight size="1rem" stroke={1.5} />,
     path: "/home/recent/post",
   },
   {
     icon: IconFingerprint,
-    label: "전체 프로젝트",
+    label: "최신 프로젝트",
     rightSection: <IconChevronRight size="1rem" stroke={1.5} />,
     path: "/home/recent/project",
   },
