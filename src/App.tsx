@@ -19,6 +19,7 @@ import Recommendation from "pages/Recommendation";
 import Notification from "pages/Notification";
 import RecentPost from "pages/RecentPost";
 import RecentProject from "pages/RecentProject";
+import Search from "pages/Search";
 
 const PrivateRoutes = () => {
   const auth = sessionStorage.getItem("logged-in");
@@ -32,11 +33,15 @@ export default function App() {
         <Routes>
           <Route element={<PrivateRoutes />}>
             <Route path="/" element={<Layout />}>
-              <Route index element={<Recommendation />} />
-              <Route path="recent">
-                <Route path="post" element={<RecentPost />} />
-                <Route path="project" element={<RecentProject />} />
+              <Route index element={<Navigate to="/home" />} />
+              <Route path="home">
+                <Route index element={<Recommendation />} />
+                <Route path="recent">
+                  <Route path="post" element={<RecentPost />} />
+                  <Route path="project" element={<RecentProject />} />R
+                </Route>
               </Route>
+
               <Route path="people">
                 <Route index element={<People />} />
                 <Route path=":id" element={<Profile />} />R
@@ -49,6 +54,7 @@ export default function App() {
               <Route path="project">
                 <Route path=":id" element={<ProjectDetail />} />
               </Route>
+              <Route path="search" element={<Search />} />
 
               <Route path="new/post" element={<NewPost />} />
               <Route path="new/project" element={<NewProject />} />

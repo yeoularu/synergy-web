@@ -8,10 +8,13 @@ import {
   ActionIcon,
   Avatar,
   Menu,
+  Modal,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
 import { ReactComponent as Logo } from "assets/logo.svg";
 import { Link, useLocation } from "react-router-dom";
+import { SearchInput } from "../search/SearchInput";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -65,8 +68,9 @@ interface HeaderSearchProps {
 
 export function HeaderSearch({ links, children }: HeaderSearchProps) {
   const activePage = useLocation().pathname.split("/")[1];
-  console.log(activePage);
   const { classes, cx } = useStyles();
+  const [opened, { open, close }] = useDisclosure(false);
+  const isSearchPage = activePage === "search";
 
   const items = links.map((link) => (
     <Link
@@ -90,8 +94,8 @@ export function HeaderSearch({ links, children }: HeaderSearchProps) {
         </Group>
 
         <Group>
-          <ActionIcon>
-            <IconSearch size="1.25rem" stroke={1.5} />
+          <ActionIcon onClick={open} disabled={isSearchPage}>
+            <IconSearch size="1.3rem" stroke={1.5} />
           </ActionIcon>
 
           <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
@@ -112,6 +116,15 @@ export function HeaderSearch({ links, children }: HeaderSearchProps) {
           </MediaQuery>
         </Group>
       </div>
+      <Modal
+        opened={opened}
+        onClose={close}
+        title="검색"
+        size="100%"
+        onSubmit={close}
+      >
+        <SearchInput />
+      </Modal>
     </Header>
   );
 }

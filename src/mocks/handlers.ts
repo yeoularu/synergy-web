@@ -453,4 +453,96 @@ export const handlers = [
 
     return res(ctx.status(200));
   }),
+
+  // Search
+  rest.get("/search", (req, res, ctx) => {
+    const keyword = req.url.searchParams.get("keyword");
+
+    if (!keyword) return res(ctx.status(400));
+    const pos = posts.filter((post) => post.content.includes(keyword));
+    const proj = projects.filter((project) => project.name.includes(keyword));
+    const usr = users.filter((user) => user.name.includes(keyword));
+    const result = {
+      posts: pos,
+      projects: proj,
+      users: usr,
+      totalElements: pos.length + proj.length + usr.length,
+    };
+    console.log(result);
+    return res(ctx.status(200), ctx.json(result));
+  }),
+
+  rest.get("/search/post", (req, res, ctx) => {
+    const keyword = req.url.searchParams.get("keyword");
+    const page = req.url.searchParams.get("page");
+
+    if (!keyword) return res(ctx.status(400));
+    const pos = posts.filter((post) => post.content.includes(keyword));
+    const result = {
+      contents: [
+        {
+          id: 999,
+          title: "this is front of page" + page,
+          content: page,
+          authorId: 999,
+          author: "page master",
+          authorAvatar: "",
+          likes: 0,
+        },
+        ...pos,
+      ],
+      totalElements: 100,
+      totalPages: 10,
+    };
+    return res(ctx.status(200), ctx.json(result));
+  }),
+  rest.get("/search/project", (req, res, ctx) => {
+    const keyword = req.url.searchParams.get("keyword");
+    const page = req.url.searchParams.get("page");
+
+    if (!keyword) return res(ctx.status(400));
+    const proj = projects.filter((project) => project.name.includes(keyword));
+    const result = {
+      contents: [
+        {
+          id: 1000 + Number(page),
+          name: "프로젝트 page" + page,
+          content: "Hello!",
+          field: ["AI", "IT서비스"],
+          createDate: "2023-09-01",
+          endDate: "2023-09-30",
+          likes: 0,
+        },
+        ...proj,
+      ],
+      totalElements: 100,
+      totalPages: 10,
+    };
+    return res(ctx.status(200), ctx.json(result));
+  }),
+
+  rest.get("/search/user", (req, res, ctx) => {
+    const keyword = req.url.searchParams.get("keyword");
+    const page = req.url.searchParams.get("page");
+
+    if (!keyword) return res(ctx.status(400));
+    const usr = users.filter((user) => user.name.includes(keyword));
+    const result = {
+      contents: [
+        {
+          id: 999,
+          backgroundImage: "https://source.unsplash.com/random",
+          avatar: "https://avatars.githubusercontent.com/u/69510411?v=4",
+          name: "page master" + page,
+          email: "page@gmail.com",
+          temperature: 44.4,
+          major: "안경광학과, 전자IT미디어공학과",
+        },
+        ...usr,
+      ],
+      totalElements: 100,
+      totalPages: 10,
+    };
+    return res(ctx.status(200), ctx.json(result));
+  }),
 ];

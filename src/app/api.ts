@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Post, Project, User, ChatRoom } from "types";
+import { Post, Project, User, ChatRoom, SearchResponse } from "types";
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({
@@ -216,6 +216,62 @@ export const api = createApi({
       invalidatesTags: (result, error, arg) => [
         { type: "Post", id: String(arg.id) },
       ],
+    }),
+
+    // Search
+    search: build.query<SearchResponse, string>({
+      query: (keyword) => `/search?keyword=${keyword}`,
+    }),
+
+    searchPosts: build.query<
+      { contents: Post[]; totalPages: number; totalElements: number },
+      [string, number]
+    >({
+      query: ([keyword, page]) =>
+        `/search/post?keyword=${keyword}&page=${page}`,
+      serializeQueryArgs: ({ endpointName }) => {
+        return endpointName;
+      },
+      merge: (currentCache, newItems) => {
+        currentCache.contents.push(...newItems.contents);
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg !== previousArg;
+      },
+    }),
+
+    searchProjects: build.query<
+      { contents: Project[]; totalPages: number; totalElements: number },
+      [string, number]
+    >({
+      query: ([keyword, page]) =>
+        `/search/project?keyword=${keyword}&page=${page}`,
+      serializeQueryArgs: ({ endpointName }) => {
+        return endpointName;
+      },
+      merge: (currentCache, newItems) => {
+        currentCache.contents.push(...newItems.contents);
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg !== previousArg;
+      },
+    }),
+
+    searchUsers: build.query<
+      { contents: User[]; totalPages: number; totalElements: number },
+      [string, number]
+    >({
+      query: ([keyword, page]) =>
+        `/search/user?keyword=${keyword}&page=${page}`,
+      serializeQueryArgs: ({ endpointName }) => {
+        return endpointName;
+      },
+      merge: (currentCache, newItems) => {
+        currentCache.contents.push(...newItems.contents);
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg !== previousArg;
+      },
     }),
   }),
 });

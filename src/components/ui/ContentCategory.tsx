@@ -12,19 +12,19 @@ const data = [
     icon: IconGauge,
     label: "For you",
     rightSection: <IconChevronRight size="1rem" stroke={1.5} />,
-    path: "/",
+    path: "/home",
   },
   {
     icon: IconGauge,
     label: "전체 글",
     rightSection: <IconChevronRight size="1rem" stroke={1.5} />,
-    path: "/recent/post",
+    path: "/home/recent/post",
   },
   {
     icon: IconFingerprint,
     label: "전체 프로젝트",
     rightSection: <IconChevronRight size="1rem" stroke={1.5} />,
-    path: "/recent/project",
+    path: "/home/recent/project",
   },
 ];
 

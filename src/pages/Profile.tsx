@@ -1,6 +1,6 @@
 import { LoadingOverlay } from "@mantine/core";
 import { api } from "app/api";
-import { UserCard } from "components/user/UserCard";
+import { UserCard } from "components/user/UserProfileCard";
 import { useParams } from "react-router-dom";
 
 export default function Profile() {

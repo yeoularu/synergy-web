@@ -43,4 +43,11 @@ interface ChatMessage {
   sendTime: string;
 }
 
-export type { Post, Project, User, ChatMessage, ChatRoom };
+interface SearchResponse {
+  totalElements: number;
+  posts: Post[];
+  projects: Project[];
+  users: User[];
+}
+
+export type { Post, Project, User, ChatMessage, ChatRoom, SearchResponse };
