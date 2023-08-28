@@ -5,24 +5,17 @@ import { useIntersection } from "@mantine/hooks";
 import UserSkeleton from "components/user/UserSkeleton";
 import { useState, useEffect } from "react";
 import UserCard from "components/user/UserCard";
+import SearchPagination from "./SearchPagination";
 
 export default function SearchUsersResult() {
-  const [page, setPage] = useState(0);
-  const [isEnd, setIsEnd] = useState(false);
+  const [page, setPage] = useState(1);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
   const { data, isLoading, isSuccess, isError, error } =
-    api.useSearchUsersQuery([query, page]);
+    api.useSearchUsersQuery([query, page - 1]);
 
-  const { ref, entry } = useIntersection();
-  useEffect(() => {
-    if (entry?.isIntersecting && isSuccess) {
-      setPage((prev) => prev + 1);
-    }
-    if (page === data?.totalPages) return setIsEnd(true);
-  }, [entry?.isIntersecting, isSuccess]);
-  console.log(entry?.isIntersecting);
+  const totalPages = data?.totalPages;
 
   let content;
   if (isLoading) {
@@ -41,11 +34,7 @@ export default function SearchUsersResult() {
           {query} 사람 검색 결과 {data?.totalElements}건
         </Text>
         {content}
-      </Stack>
-      <Stack ref={ref} w="100%" pt="md" display={isEnd ? "none" : "flex"}>
-        <UserSkeleton />
-        <UserSkeleton />
-        <UserSkeleton />
+        {totalPages && <SearchPagination {...{ totalPages, page, setPage }} />}
       </Stack>
     </>
   );

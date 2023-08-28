@@ -35,10 +35,10 @@ export default function ProjectCard({ project }: { project: Project }) {
 
   if (!project) return null;
 
-  const { id, name, content, field, createDate, endDate, likes } = project;
+  const { id, name, content, field, startAt, endAt, likes } = project;
 
   const today = new Date();
-  const createDay = new Date(createDate);
+  const createDay = new Date(startAt);
   const dday = Math.floor(
     (today.getTime() - createDay.getTime()) / 1000 / 60 / 60 / 24
   );
@@ -68,7 +68,7 @@ export default function ProjectCard({ project }: { project: Project }) {
       </Text>
 
       <Text>
-        {createDate.split("T")[0]} ~ {endDate.split("T")[0]}
+        {startAt.split("T")[0]} ~ {endAt.split("T")[0]}
       </Text>
 
       <Progress value={(23 / 36) * 100} mt={5} />

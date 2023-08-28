@@ -13,9 +13,10 @@ interface Project {
   name: string;
   content: string;
   field: string[];
-  createDate: string;
-  endDate: string;
+  startAt: string;
+  endAt: string;
   likes: number;
+  teamMemberIds: number[];
 }
 
 interface User {
@@ -26,6 +27,7 @@ interface User {
   backgroundImage: string;
   major: string;
   temperature: number;
+  bio: string;
 }
 
 interface ChatRoom {

@@ -44,16 +44,20 @@ export default function App() {
 
               <Route path="people">
                 <Route index element={<People />} />
-                <Route path=":id" element={<Profile />} />R
+                <Route path=":id" element={<Profile />} />
               </Route>
+
               <Route path="chat">
                 <Route index element={<Chat />} />
-                <Route path=":id" element={<ChatRoom />} />
+                <Route path=":id" element={<ChatRoom />} />R
               </Route>
+
               <Route path="notification" element={<Notification />} />
+
               <Route path="project">
                 <Route path=":id" element={<ProjectDetail />} />
               </Route>
+
               <Route path="search" element={<Search />} />
 
               <Route path="new/post" element={<NewPost />} />

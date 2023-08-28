@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Post, Project, User, ChatRoom, SearchResponse } from "types";
+import { Post, Project, User, ChatRoom } from "types";
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({
@@ -14,12 +14,16 @@ export const api = createApi({
     "FollowerId",
     "ChatRoom",
     "User",
+    "MyInfo",
   ],
   endpoints: (build) => ({
     // Auth
-    register: build.mutation<void, { email: string; password: string }>({
+    register: build.mutation<
+      void,
+      { email: string; password: string; name: string }
+    >({
       query: (credentials) => ({
-        url: "/api/v1/members/join",
+        url: "/api/v1/members/signup",
         method: "POST",
         body: credentials,
       }),
@@ -34,8 +38,9 @@ export const api = createApi({
     }),
 
     // MyInfo
-    getMyId: build.query<number, null>({
-      query: () => "/me/id",
+    getMyInfo: build.query<User & { followerIds: number[] }, null>({
+      query: () => "/me/info",
+      providesTags: [{ type: "MyInfo" }],
     }),
 
     getMyLikedPosts: build.query<number[], null>({
@@ -53,11 +58,6 @@ export const api = createApi({
       providesTags: [{ type: "FollowingId", id: "LIST" }],
     }),
 
-    getMyFollowers: build.query<number[], null>({
-      query: () => "/me/follower",
-      providesTags: [{ type: "FollowerId", id: "LIST" }],
-    }),
-
     getMyChatRooms: build.query<ChatRoom[], null>({
       query: () => "/me/chatrooms",
       providesTags: (result, error, arg) =>
@@ -72,9 +72,21 @@ export const api = createApi({
           : [{ type: "ChatRoom", id: "LIST" }],
     }),
 
+    editMyInfo: build.mutation<void, Partial<User>>({
+      query: (data) => ({
+        url: "/me/info",
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: (result, error, arg) => [
+        { type: "MyInfo" },
+        { type: "User", id: String(arg.id) },
+      ],
+    }),
+
     likePost: build.mutation<void, number>({
       query: (id) => ({
-        url: `/post/like/${id}`,
+        url: `/post/${id}/like`,
         method: "PUT",
       }),
 
@@ -86,7 +98,7 @@ export const api = createApi({
 
     likeProject: build.mutation<void, number>({
       query: (id) => ({
-        url: `/project/like/${id}`,
+        url: `/project/${id}/like`,
         method: "PUT",
       }),
 
@@ -140,28 +152,28 @@ export const api = createApi({
     // Post
     createPost: build.mutation<void, { title: string; content: string }>({
       query: (post) => ({
-        url: "/post/create",
+        url: "/post",
         method: "POST",
-        body: {
-          subject: post.title,
-          content: post.content,
-        },
+        body: post,
       }),
       invalidatesTags: [{ type: "Post", id: "LIST" }],
     }),
 
-    getPost: build.query<{ data: Post }, number>({
+    getPost: build.query<Post, number>({
       query: (id) => `/post/${id}`,
       providesTags: (result, error, arg) => [{ type: "Post", id: String(arg) }],
     }),
 
-    getRecentPosts: build.query<{ data: Post[] }, number>({
+    getRecentPosts: build.query<
+      { contents: Post[]; totalPages: number },
+      number
+    >({
       query: (page) => `/post/recent?page=${page}`,
       serializeQueryArgs: ({ endpointName }) => {
         return endpointName;
       },
       merge: (currentCache, newItems) => {
-        currentCache.data.push(...newItems.data);
+        currentCache.contents.push(...newItems.contents);
       },
       forceRefetch({ currentArg, previousArg }) {
         return currentArg !== previousArg;
@@ -170,7 +182,7 @@ export const api = createApi({
 
     deletePost: build.mutation<void, number>({
       query: (id) => ({
-        url: `/post/delete/${id}`,
+        url: `/post/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: (result, error, arg) => [
@@ -179,29 +191,36 @@ export const api = createApi({
     }),
 
     // Project
-    createProject: build.mutation<number, Omit<Project, "id" | "likes">>({
+    createProject: build.mutation<
+      number,
+      Omit<Project, "id" | "likes" | "teamMemberIds">
+    >({
       query: (project) => ({
-        url: "/project/create",
+        url: "/project",
         method: "POST",
         body: project,
       }),
       invalidatesTags: [{ type: "Project", id: "LIST" }],
     }),
-    getProject: build.query<{ data: Project }, { id: number }>({
-      query: ({ id }) => `/project/search/${id}`,
+
+    getProject: build.query<Project, { id: number }>({
+      query: ({ id }) => `/project/${id}`,
       providesTags: (result) =>
         result
-          ? [{ type: "Project", id: String(result.data.id) }]
+          ? [{ type: "Project", id: String(result.id) }]
           : [{ type: "Project", id: "LIST" }],
     }),
 
-    getRecentProjects: build.query<{ data: Project[] }, number>({
+    getRecentProjects: build.query<
+      { contents: Project[]; totalPages: number },
+      number
+    >({
       query: (page) => `/project/recent?page=${page}`,
       serializeQueryArgs: ({ endpointName }) => {
         return endpointName;
       },
       merge: (currentCache, newItems) => {
-        currentCache.data.push(...newItems.data);
+        currentCache.contents.push(...newItems.contents);
       },
       forceRefetch({ currentArg, previousArg }) {
         return currentArg !== previousArg;
@@ -210,7 +229,7 @@ export const api = createApi({
 
     deleteProject: build.mutation<void, { id: number }>({
       query: ({ id }) => ({
-        url: `/project/delete/${id}`,
+        url: `/project/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: (result, error, arg) => [
@@ -219,25 +238,12 @@ export const api = createApi({
     }),
 
     // Search
-    search: build.query<SearchResponse, string>({
-      query: (keyword) => `/search?keyword=${keyword}`,
-    }),
-
     searchPosts: build.query<
       { contents: Post[]; totalPages: number; totalElements: number },
       [string, number]
     >({
       query: ([keyword, page]) =>
         `/search/post?keyword=${keyword}&page=${page}`,
-      serializeQueryArgs: ({ endpointName }) => {
-        return endpointName;
-      },
-      merge: (currentCache, newItems) => {
-        currentCache.contents.push(...newItems.contents);
-      },
-      forceRefetch({ currentArg, previousArg }) {
-        return currentArg !== previousArg;
-      },
     }),
 
     searchProjects: build.query<
@@ -246,8 +252,23 @@ export const api = createApi({
     >({
       query: ([keyword, page]) =>
         `/search/project?keyword=${keyword}&page=${page}`,
-      serializeQueryArgs: ({ endpointName }) => {
-        return endpointName;
+    }),
+
+    searchUsers: build.query<
+      { contents: User[]; totalPages: number; totalElements: number },
+      [string, number]
+    >({
+      query: ([keyword, page]) =>
+        `/search/user?keyword=${keyword}&page=${page}`,
+    }),
+
+    getPostsByUser: build.query<
+      { contents: Post[]; totalPages: number },
+      [number, number]
+    >({
+      query: ([userId, page]) => `/user/${userId}/posts?page=${page}`,
+      serializeQueryArgs: ({ queryArgs, endpointName }) => {
+        return endpointName + queryArgs[0];
       },
       merge: (currentCache, newItems) => {
         currentCache.contents.push(...newItems.contents);
@@ -257,21 +278,8 @@ export const api = createApi({
       },
     }),
 
-    searchUsers: build.query<
-      { contents: User[]; totalPages: number; totalElements: number },
-      [string, number]
-    >({
-      query: ([keyword, page]) =>
-        `/search/user?keyword=${keyword}&page=${page}`,
-      serializeQueryArgs: ({ endpointName }) => {
-        return endpointName;
-      },
-      merge: (currentCache, newItems) => {
-        currentCache.contents.push(...newItems.contents);
-      },
-      forceRefetch({ currentArg, previousArg }) {
-        return currentArg !== previousArg;
-      },
+    getProjectsByUser: build.query<Project[], number>({
+      query: (userId) => `/user/${userId}/projects`,
     }),
   }),
 });

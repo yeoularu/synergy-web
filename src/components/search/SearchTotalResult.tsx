@@ -1,5 +1,5 @@
 import { api } from "app/api";
-import { Button, Stack, Text } from "@mantine/core";
+import { Button, Space, Stack, Text } from "@mantine/core";
 import { useSearchParams } from "react-router-dom";
 import PostCard from "components/post/PostCard";
 import ProjectCard from "components/project/ProjectCard";
@@ -13,11 +13,31 @@ export default function SearchTotalResult({
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query");
+
   if (!query) return <Text>검색어가 없습니다.</Text>;
 
-  const { data, isLoading } = api.useSearchQuery(query);
-  if (isLoading) return <Text>Loading...</Text>;
-  console.log(data);
+  const { data: postsData, isLoading: isPostsLoading } =
+    api.useSearchPostsQuery([query, 0]);
+  const { data: projectData, isLoading: isProjectsLoading } =
+    api.useSearchProjectsQuery([query, 0]);
+  const { data: usersData, isLoading: isUsersLoading } =
+    api.useSearchUsersQuery([query, 0]);
+
+  if (isPostsLoading || isProjectsLoading || isUsersLoading)
+    return <p>Loading...</p>;
+
+  if (!postsData || !projectData || !usersData) return <p>Error!</p>;
+
+  const data = {
+    totalElements:
+      postsData.totalElements +
+      projectData.totalElements +
+      usersData.totalElements,
+    posts: postsData.contents.slice(0, 3),
+    projects: projectData.contents.slice(0, 3),
+    users: usersData.contents.slice(0, 3),
+  };
+
   if (!data?.totalElements) return <Text>검색 결과가 없습니다.</Text>;
 
   const { totalElements, posts, projects, users } = data;
@@ -32,21 +52,27 @@ export default function SearchTotalResult({
         {posts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}
-        <Button onClick={() => handleTabChange("post")}>게시글 더 보기</Button>
+        <Button m="auto" onClick={() => handleTabChange("post")}>
+          게시글 더 보기
+        </Button>
       </Stack>
+      <Space h="md" />
       <Stack spacing="md" my="xl">
         {projects.map((project) => (
           <ProjectCard key={project.id} project={project} />
         ))}
-        <Button onClick={() => handleTabChange("project")}>
+        <Button m="auto" onClick={() => handleTabChange("project")}>
           프로젝트 더 보기
         </Button>
       </Stack>
+      <Space h="md" />
       <Stack spacing="md" my="xl">
         {users.map((user) => (
           <UserCard key={user.id} {...user} />
         ))}
-        <Button onClick={() => handleTabChange("people")}>사람 더 보기</Button>
+        <Button m="auto" onClick={() => handleTabChange("people")}>
+          사람 더 보기
+        </Button>
       </Stack>
     </>
   );

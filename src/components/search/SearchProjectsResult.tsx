@@ -5,30 +5,24 @@ import { useIntersection } from "@mantine/hooks";
 import { useState, useEffect } from "react";
 import ProjectCard from "components/project/ProjectCard";
 import PostSkeleton from "components/post/PostSkeleton";
+import usePage from "hooks/usePage";
+import SearchPagination from "./SearchPagination";
 
 export default function SearchProjectsResult() {
-  const [page, setPage] = useState(0);
-  const [isEnd, setIsEnd] = useState(false);
+  const [page, setPage] = useState(1);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
   const { data, isLoading, isSuccess, isError, error } =
-    api.useSearchProjectsQuery([query, page]);
+    api.useSearchProjectsQuery([query, page - 1]);
 
-  const { ref, entry } = useIntersection();
-  useEffect(() => {
-    if (entry?.isIntersecting && isSuccess) {
-      setPage((prev) => prev + 1);
-    }
-    if (page === data?.totalPages) return setIsEnd(true);
-  }, [entry?.isIntersecting, isSuccess]);
-  console.log(entry?.isIntersecting);
+  const totalPages = data?.totalPages;
 
   let content;
   if (isLoading) {
     content = <p>"Loading..."</p>;
   } else if (isSuccess) {
-    content = data.contents?.map((project, i) => (
+    content = data.contents.map((project, i) => (
       <ProjectCard key={i} project={project} />
     ));
   } else if (isError) {
@@ -43,11 +37,7 @@ export default function SearchProjectsResult() {
           {query} 프로젝트 검색 결과 {data?.totalElements}건
         </Text>
         {content}
-      </Stack>
-      <Stack ref={ref} w="100%" pt="md" display={isEnd ? "none" : "flex"}>
-        <PostSkeleton />
-        <PostSkeleton />
-        <PostSkeleton />
+        {totalPages && <SearchPagination {...{ totalPages, page, setPage }} />}
       </Stack>
     </>
   );

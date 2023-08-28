@@ -5,24 +5,17 @@ import PostCard from "components/post/PostCard";
 import { useIntersection } from "@mantine/hooks";
 import PostSkeleton from "components/post/PostSkeleton";
 import { useState, useEffect } from "react";
+import SearchPagination from "./SearchPagination";
 
 export default function SearchPostsResult() {
-  const [page, setPage] = useState(0);
-  const [isEnd, setIsEnd] = useState(false);
+  const [page, setPage] = useState(1);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
   const { data, isLoading, isSuccess, isError, error } =
-    api.useSearchPostsQuery([query, page]);
+    api.useSearchPostsQuery([query, page - 1]);
 
-  const { ref, entry } = useIntersection();
-  useEffect(() => {
-    if (entry?.isIntersecting && isSuccess) {
-      setPage((prev) => prev + 1);
-    }
-    if (page === data?.totalPages) return setIsEnd(true);
-  }, [entry?.isIntersecting, isSuccess]);
-  console.log(entry?.isIntersecting);
+  const totalPages = data?.totalPages;
 
   let content;
   if (isLoading) {
@@ -41,11 +34,7 @@ export default function SearchPostsResult() {
           {query} 게시글 검색 결과 {data?.totalElements}건
         </Text>
         {content}
-      </Stack>
-      <Stack ref={ref} w="100%" pt="md" display={isEnd ? "none" : "flex"}>
-        <PostSkeleton />
-        <PostSkeleton />
-        <PostSkeleton />
+        {totalPages && <SearchPagination {...{ totalPages, page, setPage }} />}
       </Stack>
     </>
   );

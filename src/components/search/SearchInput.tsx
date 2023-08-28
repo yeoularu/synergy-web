@@ -8,7 +8,11 @@ import { IconSearch, IconArrowRight } from "@tabler/icons-react";
 import { useForm } from "@mantine/form";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-export function SearchInput(props: TextInputProps) {
+export function SearchInput({
+  handleTabChange,
+}: {
+  handleTabChange?: (tab: string) => void;
+}) {
   const theme = useMantineTheme();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -28,7 +32,10 @@ export function SearchInput(props: TextInputProps) {
     },
   });
 
-  const handleSend = (text: string) => navigate(`/search?query=${text}`);
+  const handleSend = (text: string) => {
+    if (handleTabChange) handleTabChange("total");
+    navigate(`/search?query=${text}`);
+  };
 
   return (
     <form

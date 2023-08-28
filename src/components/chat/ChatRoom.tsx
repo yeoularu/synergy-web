@@ -15,7 +15,7 @@ export default function ChatRoom() {
   if (!id) {
     redirect("/chat");
   }
-  const { data: myId } = api.useGetMyIdQuery(null);
+  const { data: myInfo } = api.useGetMyInfoQuery(null);
   const { data, isSuccess, isError, error } = api.useGetMyChatRoomsQuery(null);
 
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
@@ -50,7 +50,7 @@ export default function ChatRoom() {
   const content = allMessages.reduce((acc, cur, i) => {
     const next = allMessages[i + 1];
     const { text, senderId, sendTime } = cur;
-    const fromMe = senderId === myId;
+    const fromMe = senderId === myInfo?.id;
 
     const isLast =
       !next ||
