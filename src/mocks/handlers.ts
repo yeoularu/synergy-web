@@ -208,30 +208,20 @@ export const handlers = [
     const { email } = await req.json();
     if (email === "error@test.com") return res(ctx.status(400));
 
-    // Persist user's authentication in the session
-    sessionStorage.setItem("joined", "true");
     return res(
       // Respond with a 200 status code
-      ctx.status(200)
+      ctx.status(200),
+      ctx.json("회원가입 성공")
     );
   }),
 
   rest.post("/api/v1/members/login", (_, res, ctx) => {
-    const joined = sessionStorage.getItem("joined");
-
-    if (!joined) {
-      // If not authenticated, respond with a 403 error
-      return res(
-        ctx.status(403),
-        ctx.json({
-          errorMessage: "Not authorized",
-        })
-      );
-    }
-
-    // If authenticated, return a mocked user details
-    sessionStorage.setItem("logged-in", "true");
-    return res(ctx.status(200));
+    return res(
+      ctx.status(200),
+      ctx.json(
+        "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyTmFtZSI6InJpdnNAa2FrYW8uY29tIiwiaWF0IjoxNjkzMzE2ODUxLCJleHAiOjE2OTM0MDMyNTF9.VHDyjaOf-5iB0FerCb2XZK6uNvY_1tsYMOsq-7mG7ws"
+      )
+    );
   }),
 
   rest.get("/me/info", (_, res, ctx) => {

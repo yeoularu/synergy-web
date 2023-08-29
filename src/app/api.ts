@@ -1,10 +1,19 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Post, Project, User, ChatRoom } from "types";
+import { RootState } from "./store";
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_URL,
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).auth.token;
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
   }),
+
   tagTypes: [
     "Post",
     "Project",
@@ -29,7 +38,7 @@ export const api = createApi({
       }),
     }),
 
-    login: build.mutation<void, { email: string; password: string }>({
+    login: build.mutation<string, { email: string; password: string }>({
       query: (credentials) => ({
         url: "/api/v1/members/login",
         method: "POST",

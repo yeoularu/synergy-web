@@ -20,9 +20,11 @@ import Notification from "pages/Notification";
 import RecentPost from "pages/RecentPost";
 import RecentProject from "pages/RecentProject";
 import Search from "pages/Search";
+import { selectCurrentToken } from "app/authSlice";
+import { useSelector } from "react-redux";
 
 const PrivateRoutes = () => {
-  const auth = sessionStorage.getItem("logged-in");
+  const auth = useSelector(selectCurrentToken);
   return auth ? <Outlet /> : <Navigate to="/auth" />;
 };
 
